@@ -3,16 +3,31 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
+    "@codemirror/commands": "^6.3.3",
+    "@codemirror/state": "^6.4.1",
+    "@codemirror/view": "^6.25.1",
+    "lodash": "^4.17.21",
+    "modern-normalize": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
+    "styled-components": "^6.1.8",
+    "uuid": "^9.0.1",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/lodash": "^4.14.202",
+    "@types/node": "^20.11.25",
+    "@types/prismjs": "^1.26.3",
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
+    "@types/uuid": "^9.0.8"
+  },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "BROWSER='Safari' react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
