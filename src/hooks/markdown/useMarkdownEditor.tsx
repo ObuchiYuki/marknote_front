@@ -11,6 +11,7 @@ import { useToggleBold, useToggleItalic } from "./useAction"
 import { useImageAction } from "./useImageAction"
 
 import { ImageProcessor } from "./ImageProcessor"
+import { useEditorStyle } from "./useEditorStyle";
 
 export type UseMarkdownEditorProps = {
   doc: string;
@@ -36,6 +37,7 @@ export const useMarkdownEditor = ({ doc, setDoc, imageProcessor }: UseMarkdownEd
   const imageActions = useImageAction(imageProcessor);
   const syntaxHighlight = useSyntaxHighlight();
   const markdownExtension = useMarkdown();
+  const editorStyle = useEditorStyle();
 
   // Editorのextensionsをまとめる
   const extensions = useMemo(() => {
@@ -45,9 +47,9 @@ export const useMarkdownEditor = ({ doc, setDoc, imageProcessor }: UseMarkdownEd
       indentUnit.of("    "),
       EditorView.lineWrapping,
       EditorState.tabSize.of(4),
-      updateListener, markdownExtension, syntaxHighlight, imageActions
+      updateListener, markdownExtension, syntaxHighlight, imageActions, editorStyle
     ];
-  },[updateListener, markdownExtension, syntaxHighlight, imageActions]);
+  },[updateListener, markdownExtension, syntaxHighlight, imageActions, editorStyle]);
 
   // extensionsを更新する
   useEffect(() => {

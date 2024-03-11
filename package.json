@@ -16,7 +16,8 @@
     "react-scripts": "5.0.1",
     "styled-components": "^6.1.8",
     "uuid": "^9.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "webpack": "^5.90.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.17.0",

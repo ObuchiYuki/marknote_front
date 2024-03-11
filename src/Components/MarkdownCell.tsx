@@ -7,14 +7,12 @@ const MarkdownCellBackground = styled.div`
   background-color: #F8F8F8;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 6px;
-  padding: 12px;
+  padding: 4px;
 `
 
-export const MarkdownCell = () => {
-  const [code, setCode] = useState(
-    "# Hello, world!"
-  );
-
+export const MarkdownCell = (
+  { code, setCode }: { code: string, setCode: (code: string) => void }
+) => {
   const { editor, undoManager, toggleBold, toggleItalic } = useMarkdownEditor({
     doc: code,
     setDoc: setCode,
