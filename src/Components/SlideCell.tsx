@@ -2,7 +2,6 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 import { useMarkdownEditor } from '../hooks/markdown/useMarkdownEditor';
-import { Slide } from '../types/slide';
 
 const SlideCellBackground = styled.div`
   display: flex;
@@ -17,7 +16,7 @@ const SlideCellContainer = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.15);
 `
 
-export const SlideCell = ({ slide }: { slide: Slide }) => {
+export const SlideCell = ({ slide }: { slide: { html: string, css: string } }) => {
   return (
     <SlideCellBackground>
     <SlideCellContainer>

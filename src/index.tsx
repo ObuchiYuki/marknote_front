@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { GlobalStyle } from './components/GlobalStyle'
 import { MarkdownCell } from './components/MarkdownCell';
 import { SlideCell } from './components/SlideCell';
-import { convertMarkdownToSlide } from './reducers/convertMarkdownToSlide';
+import { convertMarkdownToSlide } from './reducers/convert/convertMarkdownToSlide';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
