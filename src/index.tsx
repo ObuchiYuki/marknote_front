@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 import { GlobalStyle } from './components/GlobalStyle'
 import { MarkdownCell } from './components/MarkdownCell';
-import { convertMarkdownToSlide } from './system/convertMarkdownToSlide';
+import { SlideCell } from './components/SlideCell';
+import { convertMarkdownToSlide } from './reducers/convertMarkdownToSlide';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -12,6 +13,9 @@ const root = ReactDOM.createRoot(
 
 const TempAppContainer = styled.div`
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `;
 
 const App = () => {
@@ -24,6 +28,7 @@ const App = () => {
   return (
     <TempAppContainer>
       <MarkdownCell code={code} setCode={setCode}/>
+      <SlideCell slide={slide}/>
 
     </TempAppContainer>
   );
