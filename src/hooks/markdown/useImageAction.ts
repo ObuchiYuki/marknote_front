@@ -30,7 +30,7 @@ const onDrop = (event: DragEvent, view: EditorView, imageProcessor: ImageProcess
         const file = item.getAsFile();
         if (!file) return;
 
-        imageProcessor.process(file).then((unit) => {
+        imageProcessor(file).then((unit) => {
           insertText(unit, cursorPos, view);
         });
       }
@@ -40,7 +40,7 @@ const onDrop = (event: DragEvent, view: EditorView, imageProcessor: ImageProcess
     for (let i = 0; i < event.dataTransfer.files.length; i++) {
       const file = event.dataTransfer.files[i];
 
-      imageProcessor.process(file).then((unit) => {
+      imageProcessor(file).then((unit) => {
         insertText(unit, cursorPos, view);
       });
     }
@@ -53,7 +53,7 @@ const onPaste = (event: ClipboardEvent, view: EditorView, imageProcessor: ImageP
   for (let i = 0; i < event.clipboardData.files.length; i++) {
     const file = event.clipboardData.files[i];
 
-    imageProcessor.process(file).then((unit): void => {
+    imageProcessor(file).then((unit): void => {
       insertText(unit, view.state.selection.main.head, view);
     });
   }

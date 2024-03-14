@@ -16,10 +16,11 @@ import { useEditorStyle } from "./useEditorStyle";
 export type UseMarkdownEditorProps = {
   doc: string;
   setDoc: (doc: string) => void;
+  setFocus: (focus: boolean) => void;
   imageProcessor: ImageProcessor;
 };
 
-export const useMarkdownEditor = ({ doc, setDoc, imageProcessor }: UseMarkdownEditorProps) => {
+export const useMarkdownEditor = ({ doc, setDoc, setFocus, imageProcessor }: UseMarkdownEditorProps) => {
   const editor = useRef(null); // EditorViewの親要素のref
   const [container, setContainer] = useState<HTMLDivElement>();
   const [view, setView] = useState<EditorView>();
@@ -34,6 +35,13 @@ export const useMarkdownEditor = ({ doc, setDoc, imageProcessor }: UseMarkdownEd
     });
   }, [setDoc]);
 
+  const focusListener = useMemo(() => {
+    return EditorView.focusChangeEffect.of((_, focus) => {
+      setFocus(focus);
+      return null;
+    });
+  }, [setFocus]);
+
   const imageActions = useImageAction(imageProcessor);
   const syntaxHighlight = useSyntaxHighlight();
   const markdownExtension = useMarkdown();
@@ -47,9 +55,10 @@ export const useMarkdownEditor = ({ doc, setDoc, imageProcessor }: UseMarkdownEd
       indentUnit.of("    "),
       EditorView.lineWrapping,
       EditorState.tabSize.of(4),
-      updateListener, markdownExtension, syntaxHighlight, imageActions, editorStyle
+      updateListener, focusListener,
+      markdownExtension, syntaxHighlight, imageActions, editorStyle
     ];
-  },[updateListener, markdownExtension, syntaxHighlight, imageActions, editorStyle]);
+  },[updateListener, focusListener, markdownExtension, syntaxHighlight, imageActions, editorStyle]);
 
   // extensionsを更新する
   useEffect(() => {

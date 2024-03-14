@@ -3,6 +3,5 @@ export type ImageUnit = {
   url: string;
 }
 
-export type ImageProcessor = {
-  process(file: File): Promise<ImageUnit>;
-}
+export type ImageProcessor = (file: File) => Promise<ImageUnit>;
+  

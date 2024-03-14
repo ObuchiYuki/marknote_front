@@ -1,4 +1,4 @@
-import { MarkNodeCellGroup, MarkNoteDocument, MarkdownCell, SlideCell } from "../model/MarkNoteDocument";
+import { MarkNodeCellGroup, MarkNoteDocument } from "../model/MarkNoteDocument";
 
 export const cellReducer = {
   addMarkdownCell(state: MarkNoteDocument, action: {}): MarkNoteDocument {
@@ -13,5 +13,18 @@ export const cellReducer = {
       ...state,
       groups: [...state.groups, group],
     }
+  },
+
+  onCellForcus(state: MarkNoteDocument, action: { id: number, focus: boolean }): MarkNoteDocument {
+    console.log("onCellForcus", action);
+
+    if (action.focus) {
+      return {
+        ...state,
+        selectedCellId: action.id,
+      }
+    }
+
+    return state;
   }
 }

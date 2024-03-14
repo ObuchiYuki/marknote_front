@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { useMarkdownEditor } from '../hooks/markdown/useMarkdownEditor';
+import { useMarkdownEditor, UseMarkdownEditorProps } from '../hooks/markdown/useMarkdownEditor';
 
 const MarkdownCellBackground = styled.div`
   background-color: #F8F8F8;
@@ -11,20 +11,9 @@ const MarkdownCellBackground = styled.div`
 `
 
 export const MarkdownBlock = (
-  { code, setCode }: { code: string, setCode: (code: string) => void }
+  props: UseMarkdownEditorProps
 ) => {
-  const { editor } = useMarkdownEditor({
-    doc: code,
-    setDoc: setCode,
-    imageProcessor: {
-      process: async (file: File) => {
-        return {
-          url: URL.createObjectURL(file),
-          alt: file.name,
-        };
-      }
-    }
-  });
+  const { editor } = useMarkdownEditor(props);
 
   return (
     <MarkdownCellBackground>
