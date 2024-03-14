@@ -1,42 +1,59 @@
-import { useState } from 'react'
 import ReactDOM from 'react-dom/client'
+import { GlobalStyle } from './components/GlobalStyle'
+import { Provider as ReduxProvider } from 'react-redux'
+import { store } from './reducers/store';
+import { Notebook } from './components/Notebook';
+import { useAppDispatch } from './hooks/useRedux';
 import styled from 'styled-components';
 
-import { GlobalStyle } from './components/GlobalStyle'
-import { MarkdownCell } from './components/MarkdownCell';
-import { SlideCell } from './components/SlideCell';
-import { convertMarkdownToSlide } from './reducers/convert/convertMarkdownToSlide';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const TempAppContainer = styled.div`
-  padding: 20px;
+const TempButtonsAreaBackground = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
+  justify-content: center;
+  margin-top: 20px;
+`
 
-const App = () => {
-  const [code, setCode] = useState(
-    "# Hello, world!"
-  );
+const TempButton = styled.button`
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+`
 
-  const slide = convertMarkdownToSlide(code);
+const TempButtonsArea = () => {
+  const dispatch = useAppDispatch();
 
   return (
-    <TempAppContainer>
-      <MarkdownCell code={code} setCode={setCode}/>
-      <SlideCell slide={slide}/>
+    <TempButtonsAreaBackground>
+      <TempButton onClick={() => dispatch({ type: "addMarkdownCell" })}>Add Markdown</TempButton>
+    </TempButtonsAreaBackground>
+  );
+}
 
-    </TempAppContainer>
+const App = () => {
+  return (
+    <>
+      <Notebook/>
+    </>
   );
 }
 
 root.render(
   <>
     <GlobalStyle/>
-    <App/>
+    <ReduxProvider store={store}>
+      <TempButtonsArea/>
+      <App/>
+    </ReduxProvider>
   </>
 );

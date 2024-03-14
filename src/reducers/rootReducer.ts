@@ -1,18 +1,13 @@
-import { MarkNoteDocument } from "../model/MarkNoteDocument"
-import { configureStore, createReducer, createSlice } from "@reduxjs/toolkit"
-import { cellReducer } from "./CellReducer"
+import { mockInitialState } from "../model/MarkNoteDocument"
+import { cellReducer } from "./cellReducer"
+import { markdownReducer } from "./markdownReducer"
+import { concatReducers } from "../redux-ex/concatReducers"
 
-const mockInitialState: MarkNoteDocument = {
-  title: "Untitled",
-  cells: [],
-  selectedCellId: null,
+const reducers = {
+  ...cellReducer,
+  ...markdownReducer
 }
 
-const documentSlice = createSlice({
-  name: 'documentSlice',
-  initialState: mockInitialState,
-  reducers: {
-    ...cellReducer,
-  },
-})
-
+export const rootReducer = concatReducers(
+  mockInitialState, reducers
+);

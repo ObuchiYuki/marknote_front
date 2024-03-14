@@ -1,28 +1,28 @@
-export type MarkNoteCell = {
-  type: "markdown" | "slide";
-  id: number;
+export type MarkdownCell = {
+  content: string;
 }
 
-export type MarkdownCell = {
-  type: "markdown";
-  content: string;
-} & MarkNoteCell;
-
 export type SlideCell = {
-  type: "slide";
   html: string;
   css: string;
-} & MarkNoteCell;
+}
+
+export type MarkNoteCell = MarkdownCell | SlideCell;
+
+export type MarkNodeCellGroup = {
+  id: number;
+  markdown: MarkdownCell;
+  slide: SlideCell;
+}
 
 export type MarkNoteDocument = {
   title: string;
-  cells: MarkNoteCell[];
-
+  groups: MarkNodeCellGroup[];
   selectedCellId: number | null;
 }
 
 export const mockInitialState: MarkNoteDocument = {
   title: "Untitled",
-  cells: [],
+  groups: [],
   selectedCellId: null,
 }

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import styled from 'styled-components'
 
 import { useMarkdownEditor } from '../hooks/markdown/useMarkdownEditor';
@@ -8,12 +7,13 @@ const MarkdownCellBackground = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 6px;
   padding: 4px;
+  width: 100%;
 `
 
-export const MarkdownCell = (
+export const MarkdownBlock = (
   { code, setCode }: { code: string, setCode: (code: string) => void }
 ) => {
-  const { editor, undoManager, toggleBold, toggleItalic } = useMarkdownEditor({
+  const { editor } = useMarkdownEditor({
     doc: code,
     setDoc: setCode,
     imageProcessor: {

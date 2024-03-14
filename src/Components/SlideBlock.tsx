@@ -1,14 +1,11 @@
-import { useState } from 'react'
 import styled from 'styled-components'
 
-import { useMarkdownEditor } from '../hooks/markdown/useMarkdownEditor';
-
-const SlideCellBackground = styled.div`
+const SlideBlockContainer = styled.div`
   display: flex;
   justify-content: center;
 `
 
-const SlideCellContainer = styled.div`
+const SlideBlockBackground = styled.div`
   width: 640px;
   height: 360px;
   border-radius: 6px;
@@ -16,10 +13,10 @@ const SlideCellContainer = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.15);
 `
 
-export const SlideCell = ({ slide }: { slide: { html: string, css: string } }) => {
+export const SlideBlock = ({ slide }: { slide: { html: string, css: string } }) => {
   return (
-    <SlideCellBackground>
-    <SlideCellContainer>
+    <SlideBlockContainer>
+      <SlideBlockBackground>
       <style>{slide.css}</style>
       <style>
         {`
@@ -29,8 +26,8 @@ export const SlideCell = ({ slide }: { slide: { html: string, css: string } }) =
         `}
       </style>
       <div dangerouslySetInnerHTML={{__html: slide.html}} className='slide' />
-    </SlideCellContainer>
-    </SlideCellBackground>
+      </SlideBlockBackground>
+    </SlideBlockContainer>
   );
 }
   

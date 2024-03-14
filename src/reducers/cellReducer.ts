@@ -1,17 +1,17 @@
-import { MarkNoteDocument, MarkdownCell } from "../model/MarkNoteDocument";
+import { MarkNodeCellGroup, MarkNoteDocument, MarkdownCell, SlideCell } from "../model/MarkNoteDocument";
 
 export const cellReducer = {
   addMarkdownCell(state: MarkNoteDocument, action: {}): MarkNoteDocument {
-    const cellID = state.cells.length;
-    const markdownCell: MarkdownCell = {
-      type: "markdown",
-      id: cellID,
-      content: "",
+    const groupID = state.groups.length;
+    const group: MarkNodeCellGroup = {
+      id: groupID,
+      markdown: { content: "" },
+      slide: { html: "", css: "" }
     }
 
     return {
       ...state,
-      cells: [...state.cells, markdownCell],
+      groups: [...state.groups, group],
     }
   }
 }
