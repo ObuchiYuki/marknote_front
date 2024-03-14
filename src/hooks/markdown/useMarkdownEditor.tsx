@@ -16,8 +16,9 @@ import { useEditorStyle } from "./useEditorStyle";
 export type UseMarkdownEditorProps = {
   doc: string;
   setDoc: (doc: string) => void;
-  setFocus: (focus: boolean) => void;
-  imageProcessor: ImageProcessor;
+  setFocus?: (focus: boolean) => void;
+  newPageAction?: () => void;
+  imageProcessor?: ImageProcessor;
 };
 
 export const useMarkdownEditor = ({ doc, setDoc, setFocus, imageProcessor }: UseMarkdownEditorProps) => {
@@ -35,13 +36,6 @@ export const useMarkdownEditor = ({ doc, setDoc, setFocus, imageProcessor }: Use
     });
   }, [setDoc]);
 
-  const focusListener = useMemo(() => {
-    return EditorView.focusChangeEffect.of((_, focus) => {
-      setFocus(focus);
-      return null;
-    });
-  }, [setFocus]);
-
   const imageActions = useImageAction(imageProcessor);
   const syntaxHighlight = useSyntaxHighlight();
   const markdownExtension = useMarkdown();
@@ -55,10 +49,10 @@ export const useMarkdownEditor = ({ doc, setDoc, setFocus, imageProcessor }: Use
       indentUnit.of("    "),
       EditorView.lineWrapping,
       EditorState.tabSize.of(4),
-      updateListener, focusListener,
+      updateListener,
       markdownExtension, syntaxHighlight, imageActions, editorStyle
     ];
-  },[updateListener, focusListener, markdownExtension, syntaxHighlight, imageActions, editorStyle]);
+  },[updateListener, markdownExtension, syntaxHighlight, imageActions, editorStyle]);
 
   // extensionsを更新する
   useEffect(() => {

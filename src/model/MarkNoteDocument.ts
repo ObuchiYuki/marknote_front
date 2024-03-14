@@ -18,11 +18,14 @@ export type MarkNodeCellGroup = {
 export type MarkNoteDocument = {
   title: string;
   groups: MarkNodeCellGroup[];
-  selectedCellId: number | null;
+
+  editingGroup?: number;
+  focusedGroup?: number;
+  selectedGroups: number[];
 }
 
 export const mockInitialState: MarkNoteDocument = {
   title: "Untitled",
   groups: [],
-  selectedCellId: null,
+  selectedGroups: [],
 }

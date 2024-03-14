@@ -59,9 +59,12 @@ const onPaste = (event: ClipboardEvent, view: EditorView, imageProcessor: ImageP
   }
 }
 
-export const useImageAction = (imageProcessor: ImageProcessor) => {
-  return useMemo(() => EditorView.domEventHandlers({
-    drop(event, view) { onDrop(event, view, imageProcessor); },
-    paste(event, view) { onPaste(event, view, imageProcessor); },
-  }), [imageProcessor]);
+export const useImageAction = (imageProcessor?: ImageProcessor) => {
+  return useMemo(() => {
+    if (!imageProcessor) return EditorView.domEventHandlers({});
+    return EditorView.domEventHandlers({
+      drop(event, view) { onDrop(event, view, imageProcessor); },
+      paste(event, view) { onPaste(event, view, imageProcessor); },
+    });
+  }, [imageProcessor])
 }
