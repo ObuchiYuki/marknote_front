@@ -12,16 +12,17 @@ import { useImageAction } from "./useImageAction"
 
 import { ImageProcessor } from "./ImageProcessor"
 import { useEditorStyle } from "./useEditorStyle";
+import { useEditing } from "./useEditing";
 
 export type UseMarkdownEditorProps = {
   doc: string;
   setDoc: (doc: string) => void;
-  setFocus?: (focus: boolean) => void;
+  onEditStart?: () => void;
   newPageAction?: () => void;
   imageProcessor?: ImageProcessor;
 };
 
-export const useMarkdownEditor = ({ doc, setDoc, setFocus, imageProcessor }: UseMarkdownEditorProps) => {
+export const useMarkdownEditor = ({ doc, setDoc, onEditStart, imageProcessor }: UseMarkdownEditorProps) => {
   const editor = useRef(null); // EditorViewの親要素のref
   const [container, setContainer] = useState<HTMLDivElement>();
   const [view, setView] = useState<EditorView>();
@@ -31,10 +32,15 @@ export const useMarkdownEditor = ({ doc, setDoc, setFocus, imageProcessor }: Use
   // Editorの状態が更新されたときの処理
   const updateListener = useMemo(() => {
     return EditorView.updateListener.of(update => {
-      if (!update.docChanged) return;
-      setDoc(update.state.doc.toString());
+      if (update.docChanged) {
+        setDoc(update.state.doc.toString());
+      }
+
+      if (update.focusChanged && !update.view.hasFocus) {
+        onEditStart?.();
+      }
     });
-  }, [setDoc]);
+  }, [setDoc, onEditStart]);
 
   const imageActions = useImageAction(imageProcessor);
   const syntaxHighlight = useSyntaxHighlight();
@@ -62,6 +68,8 @@ export const useMarkdownEditor = ({ doc, setDoc, setFocus, imageProcessor }: Use
 
   // ======== Editor ========
 
+  const setEditing = useEditing(view);
+
   const toggleBold = useToggleBold(view);
   const toggleItalic = useToggleItalic(view);
 
@@ -84,5 +92,5 @@ export const useMarkdownEditor = ({ doc, setDoc, setFocus, imageProcessor }: Use
 
   }, [view, container, doc, updateListener, extensions]);
 
-  return { editor, toggleBold, toggleItalic, undoManager };
+  return { editor, toggleBold, toggleItalic, undoManager, setEditing };
 };
