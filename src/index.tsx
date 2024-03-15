@@ -42,14 +42,14 @@ const TempButtonsArea = () => {
   const dispatch = useAppDispatch();
 
   const addMarkdownCell = () => {
-    dispatch({ type: "addMarkdownCell" });
+    dispatch({ type: "addCell" });
   }
 
   const selectUp = () => { dispatch({ type: "selectUp" }); }
   const selectDown = () => { dispatch({ type: "selectDown" }); }
   const selectUpWithShift = () => { dispatch({ type: "selectUp", allowsMultiple: true }); }
   const selectDownWithShift = () => { dispatch({ type: "selectDown", allowsMultiple: true }); }
-  const editMarkdown = () => { dispatch({ type: "editMarkdown" }); }
+  const editMarkdown = () => { dispatch({ type: "editCell" }); }
 
   return (
     <TempButtonsAreaBackground>

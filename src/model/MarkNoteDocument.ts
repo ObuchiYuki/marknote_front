@@ -1,46 +1,44 @@
-export type MarkdownCell = {
+import { nanoid } from "../reducers/util/nanoid";
+
+export type MarkdownContent = {
   content: string;
 }
 
-export type SlideCell = {
+export type SlideContent = {
   html: string;
-  css: string;
 }
 
-export type MarkNoteCell = MarkdownCell | SlideCell;
-
-export type MarkNodeCellGroup = {
+export type MarkNodeCell = {
   // 内部管理用のID (nanoid)。起動時/Cellの作成時にランダムな文字列を生成する
-  
-  id: number;
-  markdown: MarkdownCell;
-  slide: SlideCell;
+  id: string;
+  markdown: MarkdownContent;
+  slide: SlideContent;
 }
 
 export type MarkNoteDocument = {
   title: string;
-  groups: MarkNodeCellGroup[];
+  cells: MarkNodeCell[];
 
-  // 選択範囲は min(cursorAnchor, cursorHead)..<max(cursorAnchor, cursorHead)
-  cursorAnchor: number; // 選択のアンカー (index)
-  cursorHead: number; // 編集中のセル | 選択の先頭 (index)
-  editingGroup?: number; // (index)
+  selectionAnchor: number; // 選択のアンカー (index)
+  selectionHead: number; // 編集中のセル | 選択の先頭 (index)
+
+  editingCellIndex?: number; // (index)
 }
 
 export const mockInitialState: MarkNoteDocument = {
   title: "Untitled",
-  groups: [
+  cells: [
     {
-      id: 0,
+      id: nanoid(),
       markdown: { content: "# Hello World" },
-      slide: { html: "", css: "" }
+      slide: { html: "" }
     },
     {
-      id: 1,
+      id: nanoid(),
       markdown: { content: "# Hello World2" },
-      slide: { html: "", css: "" }
+      slide: { html: "" }
     }
   ],
-  cursorAnchor: 0,
-  cursorHead: 0
+  selectionAnchor: 0,
+  selectionHead: 0
 }

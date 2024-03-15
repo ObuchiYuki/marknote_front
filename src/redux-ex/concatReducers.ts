@@ -31,39 +31,3 @@ export const concatReducers = <S, R extends Reducers<S>, A extends Action = ToAc
   }
 }
 
-
-// const cellReducer = {
-//   addCell(state: MarkNoteDocument, action: {}) {
-//     console.log("addCell");
-//     return state
-//   },
-//   removeCell(state: MarkNoteDocument, action: {}) {
-//     console.log("removeCell");
-//     return state
-//   }
-// }
-
-// const markdownReducer = {
-//   toggleBold(state: MarkNoteDocument, action: {}) {
-//     console.log("toggleBold");
-//     return state
-//   },
-//   toggleItalic(state: MarkNoteDocument, action: {}) {
-//     console.log("toggleItalic");
-//     return state
-//   }
-// }
-
-// const rootReducer = concatReducers<MarkNoteDocument, { type: string }>(
-//   mockInitialState,
-//   {
-//     ...cellReducer,
-//     ...markdownReducer
-//   }
-// );
-
-// const store = configureStore({
-//   reducer: rootReducer
-// });
-
-// store.dispatch({ type: "addCell" });

@@ -7,27 +7,27 @@ export const markdownReducer = {
     return state
   },
 
-  updateMarkdown(state: MarkNoteDocument, action: { content: string, id: number }): MarkNoteDocument {
-    const groups = state.groups.map(group => {
-      if (group.id === action.id) {
+  updateMarkdown(state: MarkNoteDocument, action: { content: string, index: number }): MarkNoteDocument {
+    const cells = state.cells.map((cell, index) => {
+      if (index === action.index) {
         const slide = convertMarkdownToSlide(action.content);
 
         return {
-          ...group,
+          ...cell,
           markdown: {
-            ...group.markdown,
+            ...cell.markdown,
             content: action.content,
           },
           slide: slide
         }
       } else {
-        return group;
+        return cell;
       }
     });
 
     return {
       ...state,
-      groups: groups,
+      cells: cells,
     }
   }
 }

@@ -20,24 +20,25 @@ const NodebookListContainer = styled.div`
 
 export const Notebook = () => {
   const doc = useAppSelector(state => state);
-  const [cursorMin, cursorMax] = [doc.cursorAnchor, doc.cursorHead].sort((a, b) => a - b);
+  const [cursorMin, cursorMax] = [doc.selectionAnchor, doc.selectionHead].sort((a, b) => a - b);
 
   return (
     <NodebookContainer>
       <NodebookListContainer>
         {
-          doc.groups.map((group, index) => {
-            const focused = doc.cursorHead === index;
+          doc.cells.map((cell, index) => {
+            const head = doc.selectionHead === index;
             const selected = cursorMin <= index && index <= cursorMax;
-            const multipleSelected = Math.abs(doc.cursorAnchor - doc.cursorHead) > 0 && selected;
-            const editing = doc.editingGroup === group.id;
+            const multipleSelected = Math.abs(doc.selectionAnchor - doc.selectionHead) > 0 && selected;
+            const editing = doc.editingCellIndex === index
 
             return <NotebookCell 
-              key={group.id} 
-              group={group} 
+              key={cell.id} 
+              index={index}
+              cell={cell} 
               multipleSelected={multipleSelected} 
               editing={editing} 
-              focused={focused} 
+              head={head} 
             />;
           })
         }

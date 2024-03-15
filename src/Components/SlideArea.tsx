@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components'
 
 const AreaContainer = styled.div`
@@ -14,7 +13,7 @@ const AreaBackground = styled.div`
 `
 
 export type SlideAreaProps = {
-  slide: { html: string, css: string }
+  slide: { html: string }
   slideSize?: { width: number, height: number }
   slideScale?: number
 }
@@ -25,8 +24,6 @@ export const SlideArea = ({ slide, slideSize, slideScale }: SlideAreaProps) => {
 
   return (
     <AreaContainer>
-      {/* これは後で削除する */}
-      <style>{slide.css}</style>
       <AreaBackground
         style={{ width: `${size.width * scale}px`, height: `${size.height * scale}px`, overflow: 'hidden' }}
       >

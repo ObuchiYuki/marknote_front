@@ -1,72 +1,69 @@
-import { MarkNodeCellGroup, MarkNoteDocument } from "../model/MarkNoteDocument";
-
-const initialHTML = `
-`
-
-const initialCSS = `
-.slide {
-  width: 200%;
-  height: 200%;
-  background-color: white;
-}
-`
+import { MarkNodeCell, MarkNoteDocument } from "../model/MarkNoteDocument";
+import { nanoid } from "./util/nanoid";
 
 export const cellReducer = {
-  addMarkdownCell(state: MarkNoteDocument, action: {}): MarkNoteDocument {
-    const groupID = state.groups.length;
-    const group: MarkNodeCellGroup = {
+  addCell(state: MarkNoteDocument, action: {}): MarkNoteDocument {
+    const groupID = nanoid();
+    const group: MarkNodeCell = {
       id: groupID,
       markdown: { content: "" },
-      slide: { html: initialHTML, css: initialCSS }
+      slide: { html: "" }
     }
+
+    const inserIndex = state.selectionHead + 1;
+    const nextCells = [...state.cells];
+    nextCells.splice(inserIndex, 0, group);
 
     return {
       ...state,
-      editingGroup: groupID,
-      groups: [...state.groups, group],
+      selectionHead: inserIndex,
+      selectionAnchor: inserIndex,
+      editingCellIndex: inserIndex,
+      cells: nextCells
     }
   },
 
-  selectCell(state: MarkNoteDocument, action: { id: number, allowsMultiple?: boolean }): MarkNoteDocument {    
+  selectCell(state: MarkNoteDocument, action: { index: number, allowsMultiple?: boolean }): MarkNoteDocument {    
     const allowsMultiple = action.allowsMultiple || false;
 
     state = {
       ...state,
-      cursorHead: action.id,
-      editingGroup: undefined,
+      selectionHead: action.index,
+      editingCellIndex: undefined,
     }
 
     if (!allowsMultiple) {
-      state.cursorAnchor = action.id;
+      state.selectionAnchor = action.index;
     }
-
-    console.log(state);
-
 
     return state
   },
 
   selectUp(state: MarkNoteDocument, action: { allowsMultiple?: boolean }): MarkNoteDocument {
-    const currentCursor = state.cursorAnchor
-    const nextCursor = Math.max(0, Math.min(currentCursor - 1, state.groups.length - 1));
-
-    return cellReducer.selectCell(state, { id: nextCursor, allowsMultiple: action.allowsMultiple });
+    return cellReducer._selectArrow(state, { allowsMultiple: action.allowsMultiple, direction: -1 });
   },
 
   selectDown(state: MarkNoteDocument, action: { allowsMultiple?: boolean }): MarkNoteDocument {
-    const currentCursor = state.cursorAnchor
-    const nextCursor = Math.max(0, Math.min(currentCursor + 1, state.groups.length - 1));
-
-    return cellReducer.selectCell(state, { id: nextCursor, allowsMultiple: action.allowsMultiple });
+    return cellReducer._selectArrow(state, { allowsMultiple: action.allowsMultiple, direction: 1 });
   },
 
-  editMarkdown(state: MarkNoteDocument, action: {}): MarkNoteDocument {
+  _selectArrow(state: MarkNoteDocument, action: { allowsMultiple?: boolean, direction: number }): MarkNoteDocument {
+    const currentCursor = state.selectionHead;
+    const nextCursor = Math.max(0, Math.min(currentCursor + action.direction, state.cells.length - 1));
+
+    return cellReducer.selectCell(state, { index: nextCursor, allowsMultiple: action.allowsMultiple });
+  },
+
+  editCell(state: MarkNoteDocument, action: { index?: number }): MarkNoteDocument {
+    const index = action.index || state.selectionHead;
     return {
       ...state,
-      editingGroup: state.cursorHead,
+      selectionHead: index,
+      editingCellIndex: index,
     }
   }
 }
+
 
 
   // unselectCell(state: MarkNoteDocument, action: { ids: number | number[] }): MarkNoteDocument {

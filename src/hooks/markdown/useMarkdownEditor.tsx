@@ -14,15 +14,21 @@ import { ImageProcessor } from "./ImageProcessor"
 import { useEditorStyle } from "./useEditorStyle";
 import { useEditing } from "./useEditing";
 
+export type MarkdownEditorEventHandler = {
+  editStart?: () => void;
+  escape?: () => void;
+  newPage?: () => void;
+}
+
 export type UseMarkdownEditorProps = {
   doc: string;
   setDoc: (doc: string) => void;
-  onEditStart?: () => void;
-  newPageAction?: () => void;
+
   imageProcessor?: ImageProcessor;
+  eventHandler?: MarkdownEditorEventHandler
 };
 
-export const useMarkdownEditor = ({ doc, setDoc, onEditStart, imageProcessor }: UseMarkdownEditorProps) => {
+export const useMarkdownEditor = ({ doc, setDoc, eventHandler, imageProcessor }: UseMarkdownEditorProps) => {
   const editor = useRef(null); // EditorViewの親要素のref
   const [container, setContainer] = useState<HTMLDivElement>();
   const [view, setView] = useState<EditorView>();
@@ -37,15 +43,25 @@ export const useMarkdownEditor = ({ doc, setDoc, onEditStart, imageProcessor }: 
       }
 
       if (update.focusChanged && !update.view.hasFocus) {
-        onEditStart?.();
+        eventHandler?.editStart?.();
       }
     });
-  }, [setDoc, onEditStart]);
+  }, [setDoc, eventHandler]);
 
   const imageActions = useImageAction(imageProcessor);
   const syntaxHighlight = useSyntaxHighlight();
   const markdownExtension = useMarkdown();
   const editorStyle = useEditorStyle();
+  const keyHandler = useMemo(() => {
+    return keymap.of([
+      { 
+        key: "Escape", 
+        run: () => {
+          eventHandler?.escape?.(); return true;
+        } 
+      }
+    ])
+  }, [eventHandler]);
 
   // Editorのextensionsをまとめる
   const extensions = useMemo(() => {
@@ -56,9 +72,9 @@ export const useMarkdownEditor = ({ doc, setDoc, onEditStart, imageProcessor }: 
       EditorView.lineWrapping,
       EditorState.tabSize.of(4),
       updateListener,
-      markdownExtension, syntaxHighlight, imageActions, editorStyle
+      markdownExtension, syntaxHighlight, imageActions, editorStyle, keyHandler
     ];
-  },[updateListener, markdownExtension, syntaxHighlight, imageActions, editorStyle]);
+  },[updateListener, markdownExtension, syntaxHighlight, imageActions, editorStyle, keyHandler]);
 
   // extensionsを更新する
   useEffect(() => {
