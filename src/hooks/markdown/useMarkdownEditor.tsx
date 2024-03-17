@@ -1,4 +1,4 @@
-import { EditorState, StateEffect } from "@codemirror/state"
+import { Annotation, EditorState, StateEffect } from "@codemirror/state"
 import { EditorView, keymap } from "@codemirror/view"
 import { history, redo, undo, indentWithTab } from "@codemirror/commands"
 import { indentUnit } from '@codemirror/language';
@@ -13,10 +13,14 @@ import { useImageAction } from "./useImageAction"
 import { ImageProcessor } from "./ImageProcessor"
 import { useEditorStyle } from "./useEditorStyle";
 import { useEditing } from "./useEditing";
+import { useKeyEvent } from "./useKeyEvent";
 
 export type MarkdownEditorEventHandler = {
   editStart?: () => void;
+  
   escape?: () => void;
+  topEdgeMove?: () => void;
+  bottomEdgeMove?: () => void;
   newPage?: () => void;
 }
 
@@ -28,6 +32,8 @@ export type UseMarkdownEditorProps = {
   eventHandler?: MarkdownEditorEventHandler
 };
 
+const External = Annotation.define<boolean>();
+
 export const useMarkdownEditor = ({ doc, setDoc, eventHandler, imageProcessor }: UseMarkdownEditorProps) => {
   const editor = useRef(null); // EditorViewの親要素のref
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -38,30 +44,35 @@ export const useMarkdownEditor = ({ doc, setDoc, eventHandler, imageProcessor }:
   // Editorの状態が更新されたときの処理
   const updateListener = useMemo(() => {
     return EditorView.updateListener.of(update => {
-      if (update.docChanged) {
+      if (update.docChanged && !update.transactions.some((tr) => tr.annotation(External))) {
         setDoc(update.state.doc.toString());
       }
 
-      if (update.focusChanged && !update.view.hasFocus) {
+      if (update.focusChanged && update.view.hasFocus) {
         eventHandler?.editStart?.();
       }
     });
   }, [setDoc, eventHandler]);
 
+  // docの変更を検知してviewを更新する
+  useEffect(() => {
+    if (!view) return;
+    const currentValue = view ? view.state.doc.toString() : '';
+    if (view && doc !== currentValue) {
+      view.dispatch({
+        changes: { from: 0, to: currentValue.length, insert: doc || '' },
+        annotations: [External.of(true)],
+      });
+    }
+  }, [doc, view]);
+
+  
+
   const imageActions = useImageAction(imageProcessor);
   const syntaxHighlight = useSyntaxHighlight();
   const markdownExtension = useMarkdown();
   const editorStyle = useEditorStyle();
-  const keyHandler = useMemo(() => {
-    return keymap.of([
-      { 
-        key: "Escape", 
-        run: () => {
-          eventHandler?.escape?.(); return true;
-        } 
-      }
-    ])
-  }, [eventHandler]);
+  const keyEvent = useKeyEvent(eventHandler);
 
   // Editorのextensionsをまとめる
   const extensions = useMemo(() => {
@@ -72,9 +83,15 @@ export const useMarkdownEditor = ({ doc, setDoc, eventHandler, imageProcessor }:
       EditorView.lineWrapping,
       EditorState.tabSize.of(4),
       updateListener,
-      markdownExtension, syntaxHighlight, imageActions, editorStyle, keyHandler
+      EditorView.domEventHandlers({
+        mousedown: (event, view) => {
+          // event.preventDefault();
+          return false;
+        }
+      }),
+      markdownExtension, syntaxHighlight, imageActions, editorStyle, keyEvent
     ];
-  },[updateListener, markdownExtension, syntaxHighlight, imageActions, editorStyle, keyHandler]);
+  },[updateListener, markdownExtension, syntaxHighlight, imageActions, editorStyle, keyEvent]);
 
   // extensionsを更新する
   useEffect(() => {

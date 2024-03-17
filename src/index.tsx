@@ -41,27 +41,38 @@ const TempButtonContainer = styled.div`
 const TempButtonsArea = () => {
   const dispatch = useAppDispatch();
 
-  const addMarkdownCell = () => {
-    dispatch({ type: "addCell" });
-  }
+  const addCell = () => { dispatch({ type: "addCell" }); }
+  const removeCell = () => { dispatch({ type: "removeCell" }); }
 
   const selectUp = () => { dispatch({ type: "selectUp" }); }
   const selectDown = () => { dispatch({ type: "selectDown" }); }
   const selectUpWithShift = () => { dispatch({ type: "selectUp", allowsMultiple: true }); }
   const selectDownWithShift = () => { dispatch({ type: "selectDown", allowsMultiple: true }); }
-  const editMarkdown = () => { dispatch({ type: "editCell" }); }
+
+  const moveUp = () => { dispatch({ type: "moveUp" }); }
+  const moveDown = () => { dispatch({ type: "moveDown" }); }
+  
+  const editCell = () => { dispatch({ type: "editCell" }); }
+  const escapeCell = () => { dispatch({ type: "escapeCell" }); }
 
   return (
-    <TempButtonsAreaBackground>
+    <TempButtonsAreaBackground onClick={(e) => {e.preventDefault(); e.stopPropagation()}}>
       <TempButtonContainer>
-        <TempButton onClick={addMarkdownCell} $color="#67A4E9">Add Markdown</TempButton>
+        <TempButton onClick={addCell} $color="#67A4E9">Add Cell</TempButton>
+        <TempButton onClick={removeCell} $color="#67A4E9">Remove Cell</TempButton>
       </TempButtonContainer>
       <TempButtonContainer>
         <TempButton onClick={selectUp} $color="#f4a53e">Select ↑</TempButton>
         <TempButton onClick={selectDown} $color="#f4a53e">Select ↓</TempButton>
         <TempButton onClick={selectUpWithShift} $color="#f4a53e">Select ↑+s</TempButton>
         <TempButton onClick={selectDownWithShift} $color="#f4a53e">Select ↓+s</TempButton>
-        <TempButton onClick={editMarkdown} $color="#f4a53e">Edit</TempButton>
+        <TempButton onClick={editCell} $color="#f4a53e">Edit</TempButton>
+        <TempButton onClick={escapeCell} $color="#f4a53e">Escape</TempButton>
+      </TempButtonContainer>
+
+      <TempButtonContainer>
+        <TempButton onClick={moveUp} $color="#2cca93">Move ↑</TempButton>
+        <TempButton onClick={moveDown} $color="#2cca93">Move ↓</TempButton>
       </TempButtonContainer>
 
       <TempButtonContainer>
@@ -73,20 +84,34 @@ const TempButtonsArea = () => {
   );
 }
 
+const AppContainer = () => {
+  const dispatch = useAppDispatch();
+
+  const backgroundClick = () => {
+    dispatch({ type: "escapeCell" })
+  }
+
+  return (
+    <div onClick={backgroundClick}>
+      <TempButtonsArea/>
+      <Notebook/>
+    </div>
+  );
+}
+
+
 const App = () => {
   return (
-    <>
-      <Notebook/>
-    </>
+    <ReduxProvider store={store}>
+      <AppContainer/>
+    </ReduxProvider>
   );
 }
 
 root.render(
   <>
     <GlobalStyle/>
-    <ReduxProvider store={store}>
-      <TempButtonsArea/>
-      <App/>
-    </ReduxProvider>
+    <App/>
   </>
 );
+

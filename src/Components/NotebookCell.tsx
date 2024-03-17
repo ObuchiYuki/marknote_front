@@ -28,11 +28,14 @@ export type NotebookCellProps = {
 export const NotebookCell = ({ cell, index, head, multipleSelected, editing }: NotebookCellProps) => {
   const dispatch = useAppDispatch();
   const onClickCell = (event: MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
     dispatch({ type: "selectCell", index: index, allowsMultiple: event.shiftKey });
   }
 
   const preventShiftSelection = (event: MouseEvent) => {
     event.preventDefault();
+    event.stopPropagation();
   }
   
   return (

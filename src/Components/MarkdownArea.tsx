@@ -9,7 +9,8 @@ const AreaBackground = styled.div<{ $editing: boolean }>`
   border-radius: 6px;
   padding: 4px;
   width: 100%;
-  border: ${props => props.$editing ? "2px solid #67A4E9" : "1px solid rgba(0, 0, 0, 0.15)"};
+  box-sizing: border-box;
+  border: ${props => props.$editing ? "1px solid #67A4E9" : "1px solid rgba(0, 0, 0, 0.15)"};
 `
 
 export type MarkdownAreaProps = {
@@ -25,18 +26,22 @@ export const MarkdownArea = ({ cell, index, editing }: MarkdownAreaProps) => {
     dispatch({ type: "updateMarkdown", content: content, index: index })
   }
 
-  const editMarkdown = () => {
-    dispatch({ type: "editCell" });
-  }
+  const editCell = () => { dispatch({ type: "editCell", index: index }); }
+  const escapeCell = () => { dispatch({ type: "escapeCell" }); }
+  const selectUp = () => { dispatch({ type: "selectUp" }); }
+  const selectDown = () => { dispatch({ type: "selectDown" }); }
 
   const { editor, setEditing } = useMarkdownEditor({ 
     doc: cell.content, 
     setDoc: updateMarkdown, 
     eventHandler: { 
-      editStart: editMarkdown,
+      editStart: editCell,
       escape: () => {
-        console.log("escape");
-      }
+        escapeCell();
+        setEditing(false);
+      },
+      topEdgeMove: selectUp,
+      bottomEdgeMove: selectDown,
     }
   });
 
