@@ -1,5 +1,5 @@
-import { MarkNoteDocument } from "../model/MarkNoteDocument";
-import { convertMarkdownToSlide } from "./util/convertMarkdownToSlide";
+import { MarkNoteDocument } from "../documentSlice";
+import { convertMarkdownToSlide } from "../../util/convertMarkdownToSlide";
 
 export const markdownReducer = {
   toggleBold(state: MarkNoteDocument, action: { value: number }): MarkNoteDocument {

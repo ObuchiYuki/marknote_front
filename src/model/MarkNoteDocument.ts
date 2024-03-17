@@ -1,4 +1,5 @@
-import { nanoid } from "../reducers/util/nanoid";
+import { makeCell } from "../util/makeCell";
+import { nanoid } from "../util/nanoid";
 
 export type MarkdownContent = {
   content: string;
@@ -16,29 +17,13 @@ export type MarkNodeCell = {
 }
 
 export type MarkNoteDocument = {
-  title: string;
   cells: MarkNodeCell[];
-
-  selectionAnchor: number; // 選択のアンカー (index)
-  selectionHead: number; // 編集中のセル | 選択の先頭 (index)
-
-  editingCellIndex?: number; // (index)
 }
 
-export const mockInitialState: MarkNoteDocument = {
-  title: "Untitled",
+export const initialState: MarkNoteDocument = {
   cells: [
-    {
-      id: nanoid(),
-      markdown: { content: "# Hello World" },
-      slide: { html: "" }
-    },
-    {
-      id: nanoid(),
-      markdown: { content: "# Hello World2" },
-      slide: { html: "" }
-    }
-  ],
-  selectionAnchor: 0,
-  selectionHead: 0
+    makeCell("# Hello World 1"),
+    makeCell("# Hello World 2"),
+    makeCell("# Hello World 3"),
+  ]
 }

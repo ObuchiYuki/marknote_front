@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 import { useMarkdownEditor } from '../hooks/markdown/useMarkdownEditor';
-import { MarkdownContent } from '../model/MarkNoteDocument';
+import { MarkdownContent } from '../redux/documentSlice';
 import { useAppDispatch } from '../hooks/useRedux';
 
 const AreaBackground = styled.div<{ $editing: boolean }>`

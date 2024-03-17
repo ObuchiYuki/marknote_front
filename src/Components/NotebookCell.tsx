@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { MouseEvent } from "react";
 
 import { useAppDispatch } from "../hooks/useRedux";
-import { MarkNodeCell } from "../model/MarkNoteDocument";
+import { MarkNodeCell } from "../redux/documentSlice";
 import { MarkdownArea } from "./MarkdownArea";
 import { SlideArea } from "./SlideArea";
 

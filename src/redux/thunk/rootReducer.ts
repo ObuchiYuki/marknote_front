@@ -1,7 +1,7 @@
-import { mockInitialState } from "../model/MarkNoteDocument"
+import { mockInitialState } from "../documentSlice"
 import { cellReducer } from "./CellReducer"
 import { markdownReducer } from "./MarkdownReducer"
-import { concatReducers } from "../redux-ex/concatReducers"
+import { concatReducers } from "../../redux-ex/concatReducers"
 
 const reducers = {
   ...cellReducer,

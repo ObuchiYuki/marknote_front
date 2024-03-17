@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import { GlobalStyle } from './components/GlobalStyle'
 import { Provider as ReduxProvider } from 'react-redux'
-import { store } from './reducers/store';
+import { store } from './redux/store';
 import { Notebook } from './components/Notebook';
 import { useAppDispatch } from './hooks/useRedux';
 import styled from 'styled-components';
