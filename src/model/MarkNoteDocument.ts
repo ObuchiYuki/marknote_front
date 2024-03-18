@@ -1,5 +1,4 @@
 import { makeCell } from "../util/makeCell";
-import { nanoid } from "../util/nanoid";
 
 export type MarkdownContent = {
   content: string;
@@ -7,6 +6,7 @@ export type MarkdownContent = {
 
 export type SlideContent = {
   html: string;
+  css: string;
 }
 
 export type MarkNodeCell = {
@@ -22,8 +22,8 @@ export type MarkNoteDocument = {
 
 export const initialState: MarkNoteDocument = {
   cells: [
-    makeCell("# Hello World 1"),
-    makeCell("# Hello World 2"),
-    makeCell("# Hello World 3"),
+    makeCell({ markdown: "# Hello World 1" }),
+    makeCell({ markdown: "# Hello World 2" }),
+    makeCell({ markdown: "# Hello World 3" }),
   ]
 }

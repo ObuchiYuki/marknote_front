@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { SlideContent } from '../model/MarkNoteDocument'
 
 const AreaContainer = styled.div`
   display: flex;
@@ -13,8 +14,8 @@ const AreaBackground = styled.div`
 `
 
 export type SlideAreaProps = {
-  slide: { html: string }
-  slideSize?: { width: number, height: number }
+  slide: SlideContent,
+  slideSize?: { width: number, height: number },
   slideScale?: number
 }
 
@@ -27,6 +28,7 @@ export const SlideArea = ({ slide, slideSize, slideScale }: SlideAreaProps) => {
       <AreaBackground
         style={{ width: `${size.width * scale}px`, height: `${size.height * scale}px`, overflow: 'hidden' }}
       >
+        <style>{slide.css}</style>
         <div 
           className='slide'
           style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}

@@ -10,7 +10,7 @@ export const addCell = (): AppThunk => (dispatch, getState) => {
 
   const inserIndex = ui.selectionHead + 1;
   const nextCells = [...doc.cells];
-  const cell = makeCell("");
+  const cell = makeCell({ markdown: "" });
   nextCells.splice(inserIndex, 0, cell);
 
   dispatch(setUIState({
@@ -32,7 +32,8 @@ export const removeCell = (): AppThunk => (dispatch, getState) => {
 
   if (removeCount === doc.cells.length) {
     // すべてのセルを削除する場合は、最後の1つのセルを残して、内容をクリアする
-    const cell = makeCell(doc.cells[doc.cells.length - 1].id);
+    const prevID = doc.cells[doc.cells.length - 1].id
+    const cell = makeCell({ markdown: "", id: prevID });
   
     dispatch(setCells([cell]));
     return;
@@ -101,14 +102,14 @@ const _moveCell = ({ target }: { target: number }): AppThunk => (dispatch, getSt
   const { doc, ui } = getState();
 
   if (doc.cells.length <= 1) return;
+  if (target < 0 || doc.cells.length <= target) return;
   
   const [min, max] = minmax(ui.selectionHead, ui.selectionAnchor);
-  const targetIndex = crop(target, 0, doc.cells.length - 1);
   const headCellID = doc.cells[min].id;
   const anchorCellID = doc.cells[max].id;
   const editingCellID = ui.editingCell != null ? doc.cells[ui.editingCell].id : undefined;
 
-  const nextCells = arrayMove(doc.cells, { from: min, to: max+1 }, targetIndex);
+  const nextCells = arrayMove(doc.cells, { from: min, to: max+1 }, target);
   const nextHead = nextCells.findIndex(cell => cell.id === headCellID) ?? 0;
   const nextAnchor = nextCells.findIndex(cell => cell.id === anchorCellID) ?? 0;
   const nextEditingCellIndex = editingCellID != null ? nextCells.findIndex(cell => cell.id === editingCellID) : undefined;
@@ -120,16 +121,21 @@ const _moveCell = ({ target }: { target: number }): AppThunk => (dispatch, getSt
   }));
 
   dispatch(setCells(nextCells));
+
+  const s = getState();
+  console.log(s.ui, target);
 }
 
 export const moveUp = (): AppThunk => (dispatch, getState) => {
   const { ui } = getState();
-  dispatch(_moveCell({ target: ui.selectionHead - 1 }));
+  const [min] = minmax(ui.selectionHead, ui.selectionAnchor);
+  dispatch(_moveCell({ target: min - 1 }));
 }
 
 export const moveDown = (): AppThunk => (dispatch, getState) => {
   const { ui } = getState();
-  dispatch(_moveCell({ target: ui.selectionHead + 1 }));
+  const [, max] = minmax(ui.selectionHead, ui.selectionAnchor);
+  dispatch(_moveCell({ target: max + 1 }));
 }
 
 export const editCell = ({ index }: { index?: number } = {}): AppThunk => (dispatch, getState) => {
