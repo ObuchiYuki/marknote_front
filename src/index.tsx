@@ -41,29 +41,31 @@ const TempButtonContainer = styled.div`
 `
 
 const TempButtonsArea = () => {
+  const dispatch = useAppDispatch();
+
   return (
     <TempButtonsAreaBackground onClick={(e) => {e.preventDefault(); e.stopPropagation()}}>
       <TempButtonContainer>
-        <TempButton onClick={addCell} $color="#67A4E9">Add Cell</TempButton>
-        <TempButton onClick={removeCell} $color="#67A4E9">Remove Cell</TempButton>
+        <TempButton onClick={() => { dispatch(addCell()) }} $color="#67A4E9">Add Cell</TempButton>
+        <TempButton onClick={() => { dispatch(removeCell()) }} $color="#67A4E9">Remove Cell</TempButton>
       </TempButtonContainer>
       <TempButtonContainer>
-        <TempButton onClick={() => { selectUp() }} $color="#f4a53e">Select ↑</TempButton>
-        <TempButton onClick={() => { selectDown() }} $color="#f4a53e">Select ↓</TempButton>
-        <TempButton onClick={() => { selectUp({ allowsMultiple: true }) }} $color="#f4a53e">Select ↑+s</TempButton>
-        <TempButton onClick={() => { selectDown({ allowsMultiple: true }) }} $color="#f4a53e">Select ↓+s</TempButton>
-        <TempButton onClick={() => { editCell() }} $color="#f4a53e">Edit</TempButton>
-        <TempButton onClick={() => { escapeCell() }} $color="#f4a53e">Escape</TempButton>
-      </TempButtonContainer>
-
-      <TempButtonContainer>
-        <TempButton onClick={moveUp} $color="#2cca93">Move ↑</TempButton>
-        <TempButton onClick={moveDown} $color="#2cca93">Move ↓</TempButton>
+        <TempButton onClick={() => { dispatch(selectUp()) }} $color="#f4a53e">Select ↑</TempButton>
+        <TempButton onClick={() => { dispatch(selectDown()) }} $color="#f4a53e">Select ↓</TempButton>
+        <TempButton onClick={() => { dispatch(selectUp({ allowsMultiple: true })) }} $color="#f4a53e">Select ↑+s</TempButton>
+        <TempButton onClick={() => { dispatch(selectDown({ allowsMultiple: true })) }} $color="#f4a53e">Select ↓+s</TempButton>
+        <TempButton onClick={() => { dispatch(editCell()) }} $color="#f4a53e">Edit</TempButton>
+        <TempButton onClick={() => { dispatch(escapeCell()) }} $color="#f4a53e">Escape</TempButton>
       </TempButtonContainer>
 
       <TempButtonContainer>
-        <TempButton onClick={toggleBold} $color="#3e4df4">Toggle Bold</TempButton>
-        <TempButton onClick={toggleBold} $color="#3e4df4">Toggle Italic</TempButton>
+        <TempButton onClick={() => { dispatch(moveUp()) }} $color="#2cca93">Move ↑</TempButton>
+        <TempButton onClick={() => { dispatch(moveDown()) }} $color="#2cca93">Move ↓</TempButton>
+      </TempButtonContainer>
+
+      <TempButtonContainer>
+        <TempButton onClick={() => { dispatch(toggleBold()) }} $color="#3e4df4">Toggle Bold</TempButton>
+        <TempButton onClick={() => { dispatch(toggleBold()) }} $color="#3e4df4">Toggle Italic</TempButton>
       </TempButtonContainer>
       
     </TempButtonsAreaBackground>
@@ -74,7 +76,7 @@ const AppContainer = () => {
   const dispatch = useAppDispatch();
 
   const backgroundClick = () => {
-    dispatch({ type: "escapeCell" })
+    dispatch(escapeCell())
   }
 
   return (

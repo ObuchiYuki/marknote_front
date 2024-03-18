@@ -103,11 +103,12 @@ const _moveCell = ({ target }: { target: number }): AppThunk => (dispatch, getSt
   if (doc.cells.length <= 1) return;
   
   const [min, max] = minmax(ui.selectionHead, ui.selectionAnchor);
+  const targetIndex = crop(target, 0, doc.cells.length - 1);
   const headCellID = doc.cells[min].id;
   const anchorCellID = doc.cells[max].id;
   const editingCellID = ui.editingCell != null ? doc.cells[ui.editingCell].id : undefined;
 
-  const nextCells = arrayMove(doc.cells, { from: min, to: max+1 }, target);
+  const nextCells = arrayMove(doc.cells, { from: min, to: max+1 }, targetIndex);
   const nextHead = nextCells.findIndex(cell => cell.id === headCellID) ?? 0;
   const nextAnchor = nextCells.findIndex(cell => cell.id === anchorCellID) ?? 0;
   const nextEditingCellIndex = editingCellID != null ? nextCells.findIndex(cell => cell.id === editingCellID) : undefined;
