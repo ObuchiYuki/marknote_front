@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { MouseEvent } from "react";
+import { LegacyRef, MouseEvent, forwardRef } from "react";
 
 import { MarkNodeCell } from "../model/MarkNoteDocument";
 import { MarkdownArea } from "./MarkdownArea";
@@ -24,9 +24,12 @@ export type NotebookCellProps = {
   head: boolean,
   multipleSelected: boolean,
   editing: boolean,
+
+  ref?: LegacyRef<HTMLDivElement>
 }
 
-export const NotebookCell = ({ cell, index, head, multipleSelected, editing }: NotebookCellProps) => {
+export const NotebookCell = forwardRef<HTMLDivElement, NotebookCellProps>(
+  ({ index, cell, multipleSelected, editing, head }, ref) => {
   const dispatch = useAppDispatch();
 
   const onClickCell = (event: MouseEvent) => {
@@ -42,6 +45,7 @@ export const NotebookCell = ({ cell, index, head, multipleSelected, editing }: N
   
   return (
     <CellBackground 
+      ref={ref}
       $head={head} 
       $multipleSelected={multipleSelected} 
       onClick={onClickCell} 
@@ -51,4 +55,4 @@ export const NotebookCell = ({ cell, index, head, multipleSelected, editing }: N
       <SlideArea slide={cell.slide} />
     </CellBackground>
   );
-}
+});

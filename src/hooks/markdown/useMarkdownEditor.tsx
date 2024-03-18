@@ -16,7 +16,7 @@ import { useEditing } from "./useEditing";
 import { useKeyEvent } from "./useKeyEvent";
 
 export type MarkdownEditorEventHandler = {
-  editStart?: () => void;
+  editStart?: (shift: boolean) => void;
   
   escape?: () => void;
   topEdgeMove?: () => void;
@@ -49,7 +49,7 @@ export const useMarkdownEditor = ({ doc, setDoc, eventHandler, imageProcessor }:
       }
 
       if (update.focusChanged && update.view.hasFocus) {
-        eventHandler?.editStart?.();
+        eventHandler?.editStart?.(false); // TODO: 本当はShift状態を取得したい
       }
     });
   }, [setDoc, eventHandler]);
@@ -66,7 +66,6 @@ export const useMarkdownEditor = ({ doc, setDoc, eventHandler, imageProcessor }:
     }
   }, [doc, view]);
 
-  
 
   const imageActions = useImageAction(imageProcessor);
   const syntaxHighlight = useSyntaxHighlight();
@@ -83,12 +82,6 @@ export const useMarkdownEditor = ({ doc, setDoc, eventHandler, imageProcessor }:
       EditorView.lineWrapping,
       EditorState.tabSize.of(4),
       updateListener,
-      EditorView.domEventHandlers({
-        mousedown: (event, view) => {
-          // event.preventDefault();
-          return false;
-        }
-      }),
       markdownExtension, syntaxHighlight, imageActions, editorStyle, keyEvent
     ];
   },[updateListener, markdownExtension, syntaxHighlight, imageActions, editorStyle, keyEvent]);

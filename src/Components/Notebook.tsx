@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { NotebookCell } from "./NotebookCell";
 import { useAppSelector } from "../hooks/useRedux";
+import { useEffect, useRef } from "react";
 
 const NodebookContainer = styled.div`
   display: flex;
@@ -21,7 +22,32 @@ const NodebookListContainer = styled.div`
 export const Notebook = () => {
   const doc = useAppSelector(state => state.doc);
   const ui = useAppSelector(state => state.ui);
+  const headCellRef = useRef<HTMLDivElement>(null);
   const [cursorMin, cursorMax] = [ui.selectionAnchor, ui.selectionHead].sort((a, b) => a - b);
+
+  useEffect(() => {
+    if (!headCellRef.current) return;
+    
+    const cellRect = headCellRef.current.getBoundingClientRect();
+    const viewportTop = 0;
+    const viewportBottom = window.innerHeight;
+    const margin = 20; // ここでマージンを設定
+
+    if (cellRect.top - margin < viewportTop) {
+      // セルの上部がビューポートの上に隠れている場合、マージンを考慮してスクロール
+      window.scrollTo({
+        top: window.pageYOffset + cellRect.top - margin,
+        behavior: 'smooth'
+      });
+    } else if (cellRect.bottom + margin > viewportBottom) {
+      // セルの下部がビューポートの下に隠れている場合、マージンを考慮してスクロール
+      window.scrollTo({
+        top: window.pageYOffset + cellRect.bottom - viewportBottom + margin,
+        behavior: 'smooth'
+      });
+    }
+    
+  }, [ui.selectionHead]);
 
   return (
     <NodebookContainer>
@@ -34,6 +60,7 @@ export const Notebook = () => {
             const editing = ui.editingCell === index
 
             return <NotebookCell 
+              ref={head ? headCellRef : null}
               key={cell.id} 
               index={index}
               cell={cell} 

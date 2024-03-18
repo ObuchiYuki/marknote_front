@@ -138,14 +138,11 @@ export const moveDown = (): AppThunk => (dispatch, getState) => {
   dispatch(_moveCell({ target: max + 1 }));
 }
 
-export const editCell = ({ index }: { index?: number } = {}): AppThunk => (dispatch, getState) => {
+export const editCell = ({ index, allowsMultiple }: { index?: number, allowsMultiple?: boolean } = {}): AppThunk => (dispatch, getState) => {
   const { ui } = getState();
   const nextEditing = index ?? ui.selectionHead;
-  dispatch(setUIState({ 
-    head: nextEditing,
-    anchor: nextEditing,
-    editing: nextEditing,
-  }));
+  dispatch(setEditing(nextEditing));
+  dispatch(selectCell({ index: nextEditing, allowsMultiple }));
 }
 
 export const escapeCell = (): AppThunk => (dispatch, getState) => {

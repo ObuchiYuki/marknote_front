@@ -28,7 +28,7 @@ export const MarkdownArea = ({ cell, index, editing }: MarkdownAreaProps) => {
     doc: cell.content, 
     setDoc: content => dispatch(updateMarkdown({ content: content, index: index })),
     eventHandler: { 
-      editStart: () => dispatch(editCell({ index: index })),
+      editStart: () => dispatch(editCell({ index: index, allowsMultiple: false })),
       escape: () => {
         dispatch(escapeCell());
         setEditing(false);
