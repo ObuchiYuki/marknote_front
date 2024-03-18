@@ -5,6 +5,8 @@ import { store } from './redux/store';
 import { Notebook } from './components/Notebook';
 import { useAppDispatch } from './hooks/useRedux';
 import styled from 'styled-components';
+import { addCell, editCell, escapeCell, moveDown, moveUp, removeCell, selectDown, selectUp } from './redux/thunk/cellAction';
+import { toggleBold } from './redux/thunk/markdownAction';
 
 
 const root = ReactDOM.createRoot(
@@ -39,22 +41,6 @@ const TempButtonContainer = styled.div`
 `
 
 const TempButtonsArea = () => {
-  const dispatch = useAppDispatch();
-
-  const addCell = () => { dispatch({ type: "addCell" }); }
-  const removeCell = () => { dispatch({ type: "removeCell" }); }
-
-  const selectUp = () => { dispatch({ type: "selectUp" }); }
-  const selectDown = () => { dispatch({ type: "selectDown" }); }
-  const selectUpWithShift = () => { dispatch({ type: "selectUp", allowsMultiple: true }); }
-  const selectDownWithShift = () => { dispatch({ type: "selectDown", allowsMultiple: true }); }
-
-  const moveUp = () => { dispatch({ type: "moveUp" }); }
-  const moveDown = () => { dispatch({ type: "moveDown" }); }
-  
-  const editCell = () => { dispatch({ type: "editCell" }); }
-  const escapeCell = () => { dispatch({ type: "escapeCell" }); }
-
   return (
     <TempButtonsAreaBackground onClick={(e) => {e.preventDefault(); e.stopPropagation()}}>
       <TempButtonContainer>
@@ -62,12 +48,12 @@ const TempButtonsArea = () => {
         <TempButton onClick={removeCell} $color="#67A4E9">Remove Cell</TempButton>
       </TempButtonContainer>
       <TempButtonContainer>
-        <TempButton onClick={selectUp} $color="#f4a53e">Select ↑</TempButton>
-        <TempButton onClick={selectDown} $color="#f4a53e">Select ↓</TempButton>
-        <TempButton onClick={selectUpWithShift} $color="#f4a53e">Select ↑+s</TempButton>
-        <TempButton onClick={selectDownWithShift} $color="#f4a53e">Select ↓+s</TempButton>
-        <TempButton onClick={editCell} $color="#f4a53e">Edit</TempButton>
-        <TempButton onClick={escapeCell} $color="#f4a53e">Escape</TempButton>
+        <TempButton onClick={() => { selectUp() }} $color="#f4a53e">Select ↑</TempButton>
+        <TempButton onClick={() => { selectDown() }} $color="#f4a53e">Select ↓</TempButton>
+        <TempButton onClick={() => { selectUp({ allowsMultiple: true }) }} $color="#f4a53e">Select ↑+s</TempButton>
+        <TempButton onClick={() => { selectDown({ allowsMultiple: true }) }} $color="#f4a53e">Select ↓+s</TempButton>
+        <TempButton onClick={() => { editCell() }} $color="#f4a53e">Edit</TempButton>
+        <TempButton onClick={() => { escapeCell() }} $color="#f4a53e">Escape</TempButton>
       </TempButtonContainer>
 
       <TempButtonContainer>
@@ -76,8 +62,8 @@ const TempButtonsArea = () => {
       </TempButtonContainer>
 
       <TempButtonContainer>
-        <TempButton onClick={selectUp} $color="#3e4df4">Toggle Bold</TempButton>
-        <TempButton onClick={selectUp} $color="#3e4df4">Toggle Italic</TempButton>
+        <TempButton onClick={toggleBold} $color="#3e4df4">Toggle Bold</TempButton>
+        <TempButton onClick={toggleBold} $color="#3e4df4">Toggle Italic</TempButton>
       </TempButtonContainer>
       
     </TempButtonsAreaBackground>

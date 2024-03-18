@@ -1,8 +1,9 @@
 import styled from 'styled-components'
 
 import { useMarkdownEditor } from '../hooks/markdown/useMarkdownEditor';
-import { MarkdownContent } from '../redux/documentSlice';
-import { useAppDispatch } from '../hooks/useRedux';
+import { MarkdownContent } from '../model/MarkNoteDocument';
+import { editCell, escapeCell, selectDown, selectUp } from '../redux/thunk/cellAction';
+import { updateMarkdown } from '../redux/thunk/markdownAction';
 
 const AreaBackground = styled.div<{ $editing: boolean }>`
   background-color: #F8F8F8;
@@ -20,28 +21,17 @@ export type MarkdownAreaProps = {
 }
 
 export const MarkdownArea = ({ cell, index, editing }: MarkdownAreaProps) => {
-  const dispatch = useAppDispatch();
-
-  const updateMarkdown = (content: string) => {
-    dispatch({ type: "updateMarkdown", content: content, index: index })
-  }
-
-  const editCell = () => { dispatch({ type: "editCell", index: index }); }
-  const escapeCell = () => { dispatch({ type: "escapeCell" }); }
-  const selectUp = () => { dispatch({ type: "selectUp" }); }
-  const selectDown = () => { dispatch({ type: "selectDown" }); }
-
   const { editor, setEditing } = useMarkdownEditor({ 
     doc: cell.content, 
-    setDoc: updateMarkdown, 
+    setDoc: content => updateMarkdown({ content: content, index: index }),
     eventHandler: { 
-      editStart: editCell,
+      editStart: () => { editCell({ index: index }) },
       escape: () => {
         escapeCell();
         setEditing(false);
       },
       topEdgeMove: selectUp,
-      bottomEdgeMove: selectDown,
+      bottomEdgeMove: selectDown
     }
   });
 

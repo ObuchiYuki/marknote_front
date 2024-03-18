@@ -89,11 +89,11 @@ const _selectArrow = ({ direction, allowsMultiple }: { direction: number, allows
   dispatch(selectCell({ index: nextCursor, allowsMultiple }));
 }
 
-export const selectUp = ({ allowsMultiple }: { allowsMultiple?: boolean }): AppThunk => (dispatch, getState) => {
+export const selectUp = ({ allowsMultiple }: { allowsMultiple?: boolean } = {}): AppThunk => (dispatch, getState) => {
   dispatch(_selectArrow({ direction: -1, allowsMultiple }));
 }
 
-export const selectDown = ({ allowsMultiple }: { allowsMultiple?: boolean }): AppThunk => (dispatch, getState) => {
+export const selectDown = ({ allowsMultiple }: { allowsMultiple?: boolean } = {}): AppThunk => (dispatch, getState) => {
   dispatch(_selectArrow({ direction: 1, allowsMultiple }));
 }
 
@@ -131,7 +131,7 @@ export const moveDown = (): AppThunk => (dispatch, getState) => {
   dispatch(_moveCell({ target: ui.selectionHead + 1 }));
 }
 
-export const editCell = ({ index }: { index?: number }): AppThunk => (dispatch, getState) => {
+export const editCell = ({ index }: { index?: number } = {}): AppThunk => (dispatch, getState) => {
   const { ui } = getState();
   const nextEditing = index ?? ui.selectionHead;
   dispatch(setUIState({ 

@@ -19,18 +19,19 @@ const NodebookListContainer = styled.div`
 `;
 
 export const Notebook = () => {
-  const doc = useAppSelector(state => state);
-  const [cursorMin, cursorMax] = [doc.selectionAnchor, doc.selectionHead].sort((a, b) => a - b);
+  const doc = useAppSelector(state => state.doc);
+  const ui = useAppSelector(state => state.ui);
+  const [cursorMin, cursorMax] = [ui.selectionAnchor, ui.selectionHead].sort((a, b) => a - b);
 
   return (
     <NodebookContainer>
       <NodebookListContainer>
         {
           doc.cells.map((cell, index) => {
-            const head = doc.selectionHead === index;
+            const head = ui.selectionHead === index;
             const selected = cursorMin <= index && index <= cursorMax;
-            const multipleSelected = Math.abs(doc.selectionAnchor - doc.selectionHead) > 0 && selected;
-            const editing = doc.editingCellIndex === index
+            const multipleSelected = Math.abs(ui.selectionAnchor - ui.selectionHead) > 0 && selected;
+            const editing = ui.editingCell === index
 
             return <NotebookCell 
               key={cell.id} 

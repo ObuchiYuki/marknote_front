@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { MouseEvent } from "react";
 
-import { useAppDispatch } from "../hooks/useRedux";
-import { MarkNodeCell } from "../redux/documentSlice";
+import { MarkNodeCell } from "../model/MarkNoteDocument";
 import { MarkdownArea } from "./MarkdownArea";
 import { SlideArea } from "./SlideArea";
+import { selectCell } from "../redux/thunk/cellAction";
 
 const CellBackground = styled.div<{ $head: boolean, $multipleSelected: boolean }>`
   display: flex;
@@ -26,11 +26,10 @@ export type NotebookCellProps = {
 }
 
 export const NotebookCell = ({ cell, index, head, multipleSelected, editing }: NotebookCellProps) => {
-  const dispatch = useAppDispatch();
   const onClickCell = (event: MouseEvent) => {
     event.stopPropagation();
     event.preventDefault();
-    dispatch({ type: "selectCell", index: index, allowsMultiple: event.shiftKey });
+    selectCell({ index: index, allowsMultiple: event.shiftKey });
   }
 
   const preventShiftSelection = (event: MouseEvent) => {

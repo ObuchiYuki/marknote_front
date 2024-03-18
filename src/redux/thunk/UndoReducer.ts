@@ -1,7 +1,1 @@
-import { MarkNodeCell, MarkNoteDocument } from "../documentSlice";
-
-export const undoReducer = {
-  undo(state: MarkNoteDocument, action: {}): MarkNoteDocument {
-    
-  }
-}
+export const dummy = 0; // dummy statement for ts
