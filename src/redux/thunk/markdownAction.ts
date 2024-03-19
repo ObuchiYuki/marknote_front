@@ -7,7 +7,8 @@ export const toggleBold = (): AppThunk => (dispatch, getState) => {
 }
 
 export const updateMarkdown = ({ content, index }: {content: string, index: number}): AppThunk => (dispatch, getState) => {
-  const { doc } = getState();
+  const { present: { doc } } = getState();
+
   const cells = doc.cells.map((cell, i) => {
     if (i === index) {
       const slide = convertMarkdownToSlide(content);

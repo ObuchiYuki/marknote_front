@@ -1,6 +1,6 @@
 import { Annotation, EditorState, StateEffect } from "@codemirror/state"
 import { EditorView, keymap } from "@codemirror/view"
-import { history, redo, undo, indentWithTab } from "@codemirror/commands"
+import { indentWithTab } from "@codemirror/commands"
 import { indentUnit } from '@codemirror/language';
 
 import { useRef, useState, useEffect, useMemo } from 'react'
@@ -76,13 +76,16 @@ export const useMarkdownEditor = ({ doc, setDoc, eventHandler, imageProcessor }:
   // Editorのextensionsをまとめる
   const extensions = useMemo(() => {
     return [
-      history(), 
       keymap.of([indentWithTab]),
       indentUnit.of("    "),
       EditorView.lineWrapping,
       EditorState.tabSize.of(4),
       updateListener,
-      markdownExtension, syntaxHighlight, imageActions, editorStyle, keyEvent
+      markdownExtension, 
+      syntaxHighlight, 
+      imageActions, 
+      editorStyle,
+      keyEvent
     ];
   },[updateListener, markdownExtension, syntaxHighlight, imageActions, editorStyle, keyEvent]);
 
@@ -99,10 +102,6 @@ export const useMarkdownEditor = ({ doc, setDoc, eventHandler, imageProcessor }:
   const toggleBold = useToggleBold(view);
   const toggleItalic = useToggleItalic(view);
 
-  const undoManager = {
-    undo() { if (view) undo(view) },
-    redo() { if (view) redo(view) }
-  }
   // editorのrefをcontainerに設定する
   useEffect(() => { 
     if (editor.current) setContainer(editor.current); 
@@ -118,5 +117,5 @@ export const useMarkdownEditor = ({ doc, setDoc, eventHandler, imageProcessor }:
 
   }, [view, container, doc, updateListener, extensions]);
 
-  return { editor, toggleBold, toggleItalic, undoManager, setEditing };
+  return { editor, toggleBold, toggleItalic, setEditing };
 };

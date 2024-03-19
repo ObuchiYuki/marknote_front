@@ -6,7 +6,7 @@ import { makeCell } from "../../util/makeCell";
 import { crop, minmax } from "../../util/math";
 
 export const addCell = (): AppThunk => (dispatch, getState) => {
-  const { doc, ui } = getState();
+  const { present: { doc, ui } } = getState();
 
   const inserIndex = ui.selectionHead + 1;
   const nextCells = [...doc.cells];
@@ -23,7 +23,7 @@ export const addCell = (): AppThunk => (dispatch, getState) => {
 };
 
 export const removeCell = (): AppThunk => (dispatch, getState) => {
-  const { doc, ui } = getState();
+  const { present: { doc, ui } } = getState();
 
   const [min, max] = minmax(ui.selectionHead, ui.selectionAnchor);
   const removeCount = max - min + 1;
@@ -56,7 +56,7 @@ export const removeCell = (): AppThunk => (dispatch, getState) => {
 };
 
 export const selectCell = ({ index, allowsMultiple }: { index: number, allowsMultiple?: boolean }): AppThunk => (dispatch, getState) => {
-  const { ui } = getState();
+  const { present: { ui } } = getState();
 
   allowsMultiple = allowsMultiple || false;
   
@@ -82,7 +82,7 @@ export const selectCell = ({ index, allowsMultiple }: { index: number, allowsMul
 };
 
 const _selectArrow = ({ direction, allowsMultiple }: { direction: number, allowsMultiple?: boolean }): AppThunk => (dispatch, getState) => {
-  const { doc, ui } = getState();
+  const { present: { doc, ui } } = getState();
 
   const currentCursor = ui.selectionHead;
   const nextCursor = crop(currentCursor + direction, 0, doc.cells.length - 1);
@@ -99,7 +99,7 @@ export const selectDown = ({ allowsMultiple }: { allowsMultiple?: boolean } = {}
 }
 
 const _moveCell = ({ target }: { target: number }): AppThunk => (dispatch, getState) => {
-  const { doc, ui } = getState();
+  const { present: { doc, ui } } = getState();
 
   if (doc.cells.length <= 1) return;
   if (target < 0 || doc.cells.length <= target) return;
@@ -121,25 +121,22 @@ const _moveCell = ({ target }: { target: number }): AppThunk => (dispatch, getSt
   }));
 
   dispatch(setCells(nextCells));
-
-  const s = getState();
-  console.log(s.ui, target);
 }
 
 export const moveUp = (): AppThunk => (dispatch, getState) => {
-  const { ui } = getState();
+  const { present: { ui } } = getState();
   const [min] = minmax(ui.selectionHead, ui.selectionAnchor);
   dispatch(_moveCell({ target: min - 1 }));
 }
 
 export const moveDown = (): AppThunk => (dispatch, getState) => {
-  const { ui } = getState();
+  const { present: { ui } } = getState();
   const [, max] = minmax(ui.selectionHead, ui.selectionAnchor);
   dispatch(_moveCell({ target: max + 1 }));
 }
 
 export const editCell = ({ index, allowsMultiple }: { index?: number, allowsMultiple?: boolean } = {}): AppThunk => (dispatch, getState) => {
-  const { ui } = getState();
+  const { present: { ui } } = getState();
   const nextEditing = index ?? ui.selectionHead;
   dispatch(setEditing(nextEditing));
   dispatch(selectCell({ index: nextEditing, allowsMultiple }));

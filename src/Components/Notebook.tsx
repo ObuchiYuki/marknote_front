@@ -20,8 +20,8 @@ const NodebookListContainer = styled.div`
 `;
 
 export const Notebook = () => {
-  const doc = useAppSelector(state => state.doc);
-  const ui = useAppSelector(state => state.ui);
+  const doc = useAppSelector(state => state.present.doc);
+  const ui = useAppSelector(state => state.present.ui);
   const headCellRef = useRef<HTMLDivElement>(null);
   const [cursorMin, cursorMax] = [ui.selectionAnchor, ui.selectionHead].sort((a, b) => a - b);
 
