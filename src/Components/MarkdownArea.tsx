@@ -2,8 +2,8 @@ import styled from 'styled-components'
 
 import { useMarkdownEditor } from '../hooks/markdown/useMarkdownEditor';
 import { MarkdownContent } from '../model/MarkNoteDocument';
-import { editCell, escapeCell, selectDown, selectUp } from '../redux/thunk/cellAction';
-import { updateMarkdown } from '../redux/thunk/markdownAction';
+import { editCell, escapeCell, selectDown, selectUp } from '../redux/thunk/cellThunks';
+import { updateMarkdown } from '../redux/thunk/markdownThunks';
 import { useAppDispatch } from '../hooks/useRedux';
 
 const AreaBackground = styled.div<{ $editing: boolean }>`
