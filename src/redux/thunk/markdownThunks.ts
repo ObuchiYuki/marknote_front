@@ -1,6 +1,6 @@
 import { convertMarkdownToSlide } from "../../util/convertMarkdownToSlide";
 import { setCells } from "../documentSlice";
-import { AppThunk } from "../store";
+import { AppThunk } from "../store/store";
 
 export const toggleBold = (): AppThunk => (dispatch, getState) => {
   console.log("toggleBold");

@@ -1,5 +1,5 @@
 import { setCells } from "../documentSlice";
-import { AppThunk } from "../store";
+import { AppThunk } from "../store/store";
 import { setEditing, setUIState } from "../uiSlice";
 import { arrayMove } from "../../util/arrayMove";
 import { makeCell } from "../../util/makeCell";

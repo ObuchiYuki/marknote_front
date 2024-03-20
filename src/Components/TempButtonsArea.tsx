@@ -3,7 +3,7 @@ import { toggleBold } from '../redux/thunk/markdownThunks';
 import { ActionCreators as UndoActionCreators } from 'redux-undo'
 import styled from "styled-components";
 import { useAppDispatch } from "../hooks/useRedux";
-import { handleThunk } from '../redux/thunk/handleThunk';
+import { callAction } from '../redux/connector/callAction';
 
 const TempButtonsAreaBackground = styled.div`
   display: flex;
@@ -44,8 +44,6 @@ export const TempButtonsArea = () => {
       <TempButtonContainer>
         <TempButton onClick={() => { dispatch(addCell()) }} $color="#67A4E9">Add Cell</TempButton>
         <TempButton onClick={() => { dispatch(removeCell()) }} $color="#67A4E9">Remove Cell</TempButton>
-
-        <TempButton onClick={() => { handleThunk({ type: "addCell", payload: undefined }) }} $color="#67A4E9">Add Cell (Thunk)</TempButton>
       </TempButtonContainer>
       <TempButtonContainer>
         <TempButton onClick={() => { dispatch(selectUp()) }} $color="#f4a53e">Select ↑</TempButton>

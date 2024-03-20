@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { MarkNodeCell, initialState } from "../model/MarkNoteDocument";
+import { debouncePostDocumentChange } from "./connector/postDocumentChange";
 
 export const documentSlice = createSlice({
   name: 'document',
@@ -7,6 +8,8 @@ export const documentSlice = createSlice({
   reducers: {
     setCells: (state, action: PayloadAction<MarkNodeCell[]>) => {
       state.cells = action.payload
+
+      debouncePostDocumentChange()
     }    
   }
 });
