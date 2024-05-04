@@ -22,8 +22,11 @@ export const uiSlice = createSlice({
       state.selectionHead = action.payload.head;
       state.selectionAnchor = action.payload.anchor;
       state.editingCell = action.payload.editing;
+    },
+    setSidebarCollapsed: (state, action: PayloadAction<boolean>) => {
+      state.sidebarCollapsed = action.payload
     }
   }
 });
 
-export const { setAnchor, setHead, setEditing, setSelection, setUIState } = uiSlice.actions;
+export const { setAnchor, setHead, setEditing, setSelection, setUIState, setSidebarCollapsed } = uiSlice.actions;

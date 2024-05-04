@@ -4,8 +4,13 @@ import { store } from "../store/store";
 
 
 const postMessage = ({ type, message }: { type: string, message: unknown }) => {
-  // @ts-ignore
-  window.webkit.messageHandlers[type].postMessage(message);
+  try {
+    // @ts-ignore
+    window.webkit.messageHandlers[type].postMessage(message);
+  } catch (e) {
+    // if not in webview, ignore
+    console.error(e);
+  }
 }
 
 export const postDocumentChange = () => {

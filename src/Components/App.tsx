@@ -4,7 +4,15 @@ import { Notebook } from '../components/Notebook';
 import { useAppDispatch } from '../hooks/useRedux';
 import { escapeCell } from '../redux/thunk/cellThunks';
 import { TempButtonsArea } from './TempButtonsArea';
+import styled from 'styled-components';
+import { Sidebar } from './Sidebar';
 
+const AppColumn = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center; 
+  height: 100vh;
+`;
 
 const AppContainer = () => {
   const dispatch = useAppDispatch();
@@ -16,7 +24,11 @@ const AppContainer = () => {
   return (
     <div onClick={backgroundClick}>
       <TempButtonsArea/>
-      <Notebook/>
+      
+      <AppColumn>
+        <Sidebar/>
+        <Notebook/>
+      </AppColumn>
     </div>
   );
 }

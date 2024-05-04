@@ -145,3 +145,11 @@ export const editCell = ({ index, allowsMultiple }: { index?: number, allowsMult
 export const escapeCell = (): AppThunk => (dispatch, getState) => {
   dispatch(setEditing(undefined));
 }
+
+export const selectDownAndNewCellIfBottom = (): AppThunk => (dispatch, getState) => {
+  dispatch(selectDown({ allowsMultiple: true }));
+  const { present: { doc, ui } } = getState();
+  if (ui.selectionHead === doc.cells.length - 1) {
+    dispatch(addCell());
+  }
+}
