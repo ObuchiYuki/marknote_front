@@ -1,11 +1,11 @@
 import { Provider as ReduxProvider } from 'react-redux'
 import { store } from '../redux/store/store';
-import { Notebook } from '../components/Notebook';
+import { Notebook } from '../components/main/Notebook';
 import { useAppDispatch } from '../hooks/useRedux';
 import { escapeCell } from '../redux/thunk/cellThunks';
 import { TempButtonsArea } from './TempButtonsArea';
 import styled from 'styled-components';
-import { Sidebar } from './Sidebar';
+import { Sidebar } from './sidebar/Sidebar';
 
 const AppColumn = styled.div`
   display: flex;
@@ -27,7 +27,7 @@ const AppContainer = () => {
       
       <AppColumn>
         <Sidebar/>
-        <Notebook/>
+        <Notebook style={{flexGrow: 1}}/>
       </AppColumn>
     </div>
   );

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { SlideContent } from '../model/MarkNoteDocument'
+import { SlideContent } from '../../model/MarkNoteDocument'
 
 const AreaContainer = styled.div`
   display: flex;

@@ -3,7 +3,7 @@ import { convertDocumentToMarkdown } from "../../util/convertDocumentToMarkdown"
 import { store } from "../store/store";
 
 
-const postMessage = ({ type, message }: { type: string, message: unknown }) => {
+const callNativeAction = ({ type, message }: { type: string, message: unknown }) => {
   try {
     // @ts-ignore
     window.webkit.messageHandlers[type].postMessage(message);
@@ -13,10 +13,10 @@ const postMessage = ({ type, message }: { type: string, message: unknown }) => {
   }
 }
 
-export const postDocumentChange = () => {
+export const callNativeDocumentChange = () => {
   const { present: { doc } } = store.getState();
   const markdown = convertDocumentToMarkdown(doc);
-  postMessage({ type: "setdoc", message: markdown });
+  callNativeAction({ type: "setdoc", message: markdown });
 }
 
-export const debouncePostDocumentChange = debounce(postDocumentChange, 500);
+export const debounceCallNativeDocumentChange = debounce(callNativeDocumentChange, 500);

@@ -3,7 +3,6 @@ import { toggleBold } from '../redux/thunk/markdownThunks';
 import { ActionCreators as UndoActionCreators } from 'redux-undo'
 import styled from "styled-components";
 import { useAppDispatch } from "../hooks/useRedux";
-import { callAction } from '../redux/connector/callAction';
 import { toggleSidebar } from '../redux/thunk/uiThunks';
 
 const TempButtonsAreaBackground = styled.div`

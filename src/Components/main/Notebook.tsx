@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { NotebookCell } from "./NotebookCell";
-import { useAppSelector } from "../hooks/useRedux";
-import { useEffect, useRef } from "react";
+import { useAppSelector } from "../../hooks/useRedux";
+import React, { useEffect, useRef } from "react";
 
 const NodebookContainer = styled.div`
   display: flex;
@@ -21,7 +21,7 @@ const NodebookListContainer = styled.div`
   border-radius: 5px;
 `;
 
-export const Notebook = () => {
+export const Notebook = ({ style }: { style: React.CSSProperties }) => {
   const doc = useAppSelector(state => state.present.doc);
   const ui = useAppSelector(state => state.present.ui);
   const headCellRef = useRef<HTMLDivElement>(null);
@@ -52,7 +52,7 @@ export const Notebook = () => {
   }, [ui.selectionHead]);
 
   return (
-    <NodebookContainer>
+    <NodebookContainer style={style}>
       <NodebookListContainer>
         {
           doc.cells.map((cell, index) => {

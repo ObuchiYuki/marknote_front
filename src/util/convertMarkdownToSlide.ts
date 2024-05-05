@@ -7,5 +7,11 @@ export const convertMarkdownToSlide = (markdown: string): SlideContent => {
     script: false,
   })
   
-  return marp.render(markdown)
+  const { html, css } = marp.render(markdown)
+
+  return {
+    html: html,
+    css: css,
+    size: { width: 1280, height: 720 }
+  }
 }

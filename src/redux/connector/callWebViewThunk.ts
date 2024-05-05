@@ -12,7 +12,7 @@ const rootThunk = {
   ...markdownThunks
 } as any
 
-export const callAction = (selector: ThunkSelector) => {
+export const callWebViewThunk = (selector: ThunkSelector) => {
   const { type, payload } = selector;
 
   const thunkFunction = rootThunk[type];
@@ -30,5 +30,5 @@ export const callAction = (selector: ThunkSelector) => {
 
 if (window) {
   // @ts-ignore
-  window.callAction = callAction;
+  window.foreignerCallThunkAction = foreignerCallThunkAction;
 }

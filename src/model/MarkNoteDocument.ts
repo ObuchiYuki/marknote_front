@@ -7,6 +7,7 @@ export type MarkdownContent = {
 export type SlideContent = {
   html: string;
   css: string;
+  size: { width: number, height: number };
 }
 
 export type MarkNodeCell = {

@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { LegacyRef, MouseEvent, forwardRef } from "react";
 
-import { MarkNodeCell } from "../model/MarkNoteDocument";
+import { MarkNodeCell } from "../../model/MarkNoteDocument";
 import { MarkdownArea } from "./MarkdownArea";
 import { SlideArea } from "./SlideArea";
-import { selectCell } from "../redux/thunk/cellThunks";
-import { useAppDispatch } from "../hooks/useRedux";
+import { selectCell } from "../../redux/thunk/cellThunks";
+import { useAppDispatch } from "../../hooks/useRedux";
 
 const CellBackground = styled.div<{ $head: boolean, $multipleSelected: boolean }>`
   display: flex;
