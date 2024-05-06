@@ -1,11 +1,57 @@
-import styled from "styled-components";
-import { MarkNodeCell } from "../../model/MarkNoteDocument";
-import { useEffect, useRef, useState } from "react";
+import styled, { CSSProperties } from "styled-components";
+import { MarkNoteCell } from "../../model/MarkNoteDocument";
+import { SidebarSlideRenderView } from "./SidebarSlideRenderView";
+import { R } from "../R";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { on } from "events";
 
-const SIDEBAR_CELL_WIDTH = 200;
+const cellBorderRadius = (selected: boolean, aboveSelected: boolean, belowSelected: boolean) => {
+  if (!selected) { return "0"; }
+  if (aboveSelected && belowSelected) { return "0"; }
+  if (aboveSelected) { return "0 0 8px 8px"; }
+  if (belowSelected) { return "8px 8px 0 0"; }
+  return "8px";
+}
+
+export const SidebarCellContainer = styled.div<{ $head: boolean, $selected: boolean, $aboveSelected: boolean, $belowSelected: boolean }>`
+  padding: 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+  position: relative;
+  background-color: ${props => props.$selected ? R.color.accentWithAlpha(0.2) : "transparent"};
+  border-radius: ${props => cellBorderRadius(props.$selected, props.$aboveSelected, props.$belowSelected)};
+  position: relative;
+  
+  &::before {
+    content: "";
+    display: ${props => props.$head ? "block" : "none"};
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    background-color: ${R.color.accent}
+  }
+`
+
+export const SidebarCellIndex = styled.span<{ $head: boolean }>`
+  color: ${props => props.$head ? "white" : R.color.secondaryText};
+  font-size: 10px;
+  font-weight: 600;
+  width: 11px;  
+  min-width: 11px;
+  max-width: 11px;
+  text-align: right;
+  transform: translateY(-2px);
+`
 
 export type SidebarCellProps = {
-  cell: MarkNodeCell,
+  cell: MarkNoteCell,
 
   index: number,
   
@@ -13,61 +59,50 @@ export type SidebarCellProps = {
   selected: boolean,
   aboveSelected: boolean,
   belowSelected: boolean,
+
+  hidden?: boolean,
+  isDragOverlay?: boolean,
+  selectionCount?: number,
+
+  onClick?: (event: React.MouseEvent) => void,
 }
 
-const SidebarCellContainer = styled.div`
-  width: ${SIDEBAR_CELL_WIDTH}px;
-  height: auto;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-`
+export const SidebarCell = ({ cell, index, head, selected, aboveSelected, belowSelected, onClick, isDragOverlay, hidden }: SidebarCellProps) => {
 
-export const SidebarCell = ({ cell, index, head, selected, aboveSelected, belowSelected }: SidebarCellProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [slideSize, setSlideSize] = useState<{ width: number, height: number }>({ width: 1280, height: 720 });
-  const [scaleFactor, setScaleFactor] = useState(1);
-  
-  useEffect(() => {
-    const resizeObserver = new ResizeObserver(entries => {
-      for (let entry of entries) {
-        const size = { width: entry.borderBoxSize[0].inlineSize, height: entry.borderBoxSize[0].blockSize }
-        const newScaleFactor = SIDEBAR_CELL_WIDTH / Math.max(size.width, size.height);
-        setSlideSize(size);
-        setScaleFactor(newScaleFactor);
-      }
-    });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition
+  } = useSortable({ id: cell.id });
 
-    if (containerRef.current) {
-      const element = containerRef.current?.children[0]?.children[0] as HTMLElement;
-      resizeObserver.observe(element);
-    } 
-
-    return () => resizeObserver.disconnect();
-  }, []);
-
-  const width = slideSize.width * scaleFactor;
-  const height = slideSize.height * scaleFactor;
+  const style: CSSProperties = {
+    zIndex: isDragOverlay ? 9999999 : 0,
+    opacity: hidden ? 0 : 1,
+    cursor: "pointer",
+    position: "relative",
+    boxShadow: isDragOverlay ? "0 4px 20px 0 rgba(0,0,0,0.5)" : "0 4px 20px 0 rgba(0,0,0,0)",
+    transformOrigin: 'center',
+    transition: transition,
+    transform: CSS.Transform.toString(transform),
+  };
 
   return (
-      <SidebarCellContainer
-        style={{
-          width: `${width}px`,
-          height: `${height}px`,
-          minHeight: `${height}px`,
-        }}
-      >
-
-        <div 
-            ref={containerRef}
-            className='slide'
-            style={{ 
-              transform: `scale(${scaleFactor})`, 
-              transformOrigin: 'top left',
-            }}
-            dangerouslySetInnerHTML={{__html: cell.slide.html}} 
-        />
-
-      </SidebarCellContainer>
+    <SidebarCellContainer 
+      $head={head} 
+      $selected={selected} 
+      $aboveSelected={aboveSelected} 
+      $belowSelected={belowSelected} 
+      
+      onClick={onClick}
+      ref={setNodeRef} 
+      style={style} 
+      {...attributes}
+      {...listeners}
+    >
+      <SidebarCellIndex $head={head}>{ index+1 }</SidebarCellIndex>
+      <SidebarSlideRenderView cell={cell} />
+    </SidebarCellContainer>
   );
 }

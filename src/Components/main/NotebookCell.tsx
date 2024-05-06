@@ -1,35 +1,60 @@
 import styled from "styled-components";
 import { LegacyRef, MouseEvent, forwardRef } from "react";
 
-import { MarkNodeCell } from "../../model/MarkNoteDocument";
+import { MarkNoteCell } from "../../model/MarkNoteDocument";
 import { MarkdownArea } from "./MarkdownArea";
 import { SlideArea } from "./SlideArea";
 import { selectCell } from "../../redux/thunk/cellThunks";
 import { useAppDispatch } from "../../hooks/useRedux";
+import { R } from "../R";
 
-const CellBackground = styled.div<{ $head: boolean, $multipleSelected: boolean }>`
+const cellBorderRadius = (selected: boolean, aboveSelected: boolean, belowSelected: boolean) => {
+  if (!selected) { return "0"; }
+  if (aboveSelected && belowSelected) { return "0"; }
+  if (aboveSelected) { return "0 0 16px 16px"; }
+  if (belowSelected) { return "16px 16px 0 0"; }
+  return "16px";
+}
+
+const CellBackground = styled.div<{ $head: boolean, $multipleSelected: boolean, $aboveSelected: boolean, $belowSelected: boolean }>`
   display: flex;
   gap: 20px;
   padding: 20px;
   flex-direction: column;
-  border-left: 5px solid ${props => props.$head ? "#67A4E9" : "transparent"};
-  background-color: ${props => props.$multipleSelected ? "#67a4e925" : "transparent"};
+  background-color: ${props => props.$multipleSelected ? R.color.accentWithAlpha(0.1) : "transparent"};
+  border-radius: ${props => cellBorderRadius(props.$multipleSelected, props.$aboveSelected, props.$belowSelected)};
+  position: relative;
+
+  /* border-left: 5px solid ${props => props.$head ? R.color.accent : "transparent"}; */
+  &::before {
+    content: "";
+    display: ${props => props.$head ? "block" : "none"};
+    position: absolute;
+    height: calc(100% - 32px);
+    width: 5px;
+    top: 16px;
+    left: 0px;
+    border-radius: 10px;
+    background-color: ${R.color.accent};
+  }
 `;
 
 export type NotebookCellProps = {
-  cell: MarkNodeCell,
+  cell: MarkNoteCell,
 
   index: number,
   
   head: boolean,
   multipleSelected: boolean,
+  aboveSelected: boolean,
+  belowSelected: boolean,
   editing: boolean,
 
   ref?: LegacyRef<HTMLDivElement>
 }
 
 export const NotebookCell = forwardRef<HTMLDivElement, NotebookCellProps>(
-  ({ index, cell, multipleSelected, editing, head }, ref) => {
+  ({ index, cell, multipleSelected, aboveSelected, belowSelected, editing, head }, ref) => {
   const dispatch = useAppDispatch();
 
   const onClickCell = (event: MouseEvent) => {
@@ -48,6 +73,8 @@ export const NotebookCell = forwardRef<HTMLDivElement, NotebookCellProps>(
       ref={ref}
       $head={head} 
       $multipleSelected={multipleSelected} 
+      $aboveSelected={aboveSelected}
+      $belowSelected={belowSelected}
       onClick={onClickCell} 
       onMouseDown={preventShiftSelection}
     >

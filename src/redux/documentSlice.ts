@@ -1,12 +1,12 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { MarkNodeCell, initialState } from "../model/MarkNoteDocument";
+import { MarkNoteCell, initialState } from "../model/MarkNoteDocument";
 import { debounceCallNativeDocumentChange } from "./connector/callNativeAction";
 
 export const documentSlice = createSlice({
   name: 'document',
   initialState: initialState,
   reducers: {
-    setCells: (state, action: PayloadAction<MarkNodeCell[]>) => {
+    setCells: (state, action: PayloadAction<MarkNoteCell[]>) => {
       state.cells = action.payload
 
       debounceCallNativeDocumentChange()

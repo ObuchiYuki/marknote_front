@@ -27,29 +27,29 @@ export const Notebook = ({ style }: { style: React.CSSProperties }) => {
   const headCellRef = useRef<HTMLDivElement>(null);
   const [cursorMin, cursorMax] = [ui.selectionAnchor, ui.selectionHead].sort((a, b) => a - b);
 
-  useEffect(() => {
-    if (!headCellRef.current) return;
+  // useEffect(() => {
+  //   if (!headCellRef.current) return;
     
-    const cellRect = headCellRef.current.getBoundingClientRect();
-    const viewportTop = 0;
-    const viewportBottom = window.innerHeight;
-    const margin = 20; // ここでマージンを設定
+  //   const cellRect = headCellRef.current.getBoundingClientRect();
+  //   const viewportTop = 0;
+  //   const viewportBottom = window.innerHeight;
+  //   const margin = 20; // ここでマージンを設定
 
-    if (cellRect.top - margin < viewportTop) {
-      // セルの上部がビューポートの上に隠れている場合、マージンを考慮してスクロール
-      window.scrollTo({
-        top: window.pageYOffset + cellRect.top - margin,
-        behavior: 'smooth'
-      });
-    } else if (cellRect.bottom + margin > viewportBottom) {
-      // セルの下部がビューポートの下に隠れている場合、マージンを考慮してスクロール
-      window.scrollTo({
-        top: window.pageYOffset + cellRect.bottom - viewportBottom + margin,
-        behavior: 'smooth'
-      });
-    }
+  //   if (cellRect.top - margin < viewportTop) {
+  //     // セルの上部がビューポートの上に隠れている場合、マージンを考慮してスクロール
+  //     window.scrollTo({
+  //       top: window.pageYOffset + cellRect.top - margin,
+  //       behavior: 'smooth'
+  //     });
+  //   } else if (cellRect.bottom + margin > viewportBottom) {
+  //     // セルの下部がビューポートの下に隠れている場合、マージンを考慮してスクロール
+  //     window.scrollTo({
+  //       top: window.pageYOffset + cellRect.bottom - viewportBottom + margin,
+  //       behavior: 'smooth'
+  //     });
+  //   }
     
-  }, [ui.selectionHead]);
+  // }, [ui.selectionHead]);
 
   return (
     <NodebookContainer style={style}>
@@ -59,6 +59,8 @@ export const Notebook = ({ style }: { style: React.CSSProperties }) => {
             const head = ui.selectionHead === index;
             const selected = cursorMin <= index && index <= cursorMax;
             const multipleSelected = Math.abs(ui.selectionAnchor - ui.selectionHead) > 0 && selected;
+            const aboveSelected = cursorMin < index;
+            const belowSelected = cursorMax > index;
             const editing = ui.editingCell === index
 
             return <NotebookCell 
@@ -67,6 +69,8 @@ export const Notebook = ({ style }: { style: React.CSSProperties }) => {
               index={index}
               cell={cell} 
               multipleSelected={multipleSelected} 
+              aboveSelected={aboveSelected}
+              belowSelected={belowSelected}
               editing={editing} 
               head={head} 
             />;
