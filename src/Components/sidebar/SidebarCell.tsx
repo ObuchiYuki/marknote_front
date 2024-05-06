@@ -98,6 +98,14 @@ export const SidebarCell = ({ cell, index, head, selected, aboveSelected, belowS
       onClick={onClick}
       ref={setNodeRef} 
       style={style} 
+      onMouseDown={e => {
+        e.stopPropagation();
+        e.preventDefault();
+      }}
+      onDoubleClick={e => {
+        e.stopPropagation();
+        e.preventDefault();
+      }}
       {...attributes}
       {...listeners}
     >

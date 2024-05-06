@@ -87,6 +87,7 @@ const _selectArrow = ({ direction, allowsMultiple }: { direction: number, allows
   const currentCursor = ui.selectionHead;
   const nextCursor = crop(currentCursor + direction, 0, doc.cells.length - 1);
 
+  console.log("selectArrow", currentCursor, nextCursor);
   dispatch(selectCell({ index: nextCursor, allowsMultiple }));
 }
 

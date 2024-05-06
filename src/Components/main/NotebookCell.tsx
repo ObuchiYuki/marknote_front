@@ -4,7 +4,7 @@ import { LegacyRef, MouseEvent, forwardRef } from "react";
 import { MarkNoteCell } from "../../model/MarkNoteDocument";
 import { MarkdownArea } from "./MarkdownArea";
 import { SlideArea } from "./SlideArea";
-import { selectCell } from "../../redux/thunk/cellThunks";
+import { editCell, escapeCell, selectCell } from "../../redux/thunk/cellThunks";
 import { useAppDispatch } from "../../hooks/useRedux";
 import { R } from "../R";
 
@@ -60,6 +60,9 @@ export const NotebookCell = forwardRef<HTMLDivElement, NotebookCellProps>(
   const onClickCell = (event: MouseEvent) => {
     event.stopPropagation();
     event.preventDefault();
+    if (event.shiftKey) {
+      dispatch(escapeCell());
+    }
     dispatch(selectCell({ index: index, allowsMultiple: event.shiftKey }));
   }
 

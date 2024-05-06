@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from "../../hooks/useRedux";
 import styled from "styled-components";
 import { SidebarCell } from "./SidebarCell";
-import { selectCell } from "../../redux/thunk/cellThunks";
+import { escapeCell, selectCell } from "../../redux/thunk/cellThunks";
 import { DndContext, DragEndEvent, DragStartEvent, MouseSensor, PointerSensor, UniqueIdentifier, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
 import { useState } from "react";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -70,7 +70,10 @@ export const Sidebar = () => {
   const onClick = (index: number, event: React.MouseEvent) => {
     event.stopPropagation();
     event.preventDefault();
-    dispatch(selectCell({ index: index, allowsMultiple: event.shiftKey }));
+    if (event.shiftKey) {
+      dispatch(escapeCell());
+    }
+    dispatch(selectCell({ index: index, allowsMultiple: event.shiftKey }));    
   }
 
   return (
@@ -97,7 +100,7 @@ export const Sidebar = () => {
               const aboveSelected = cursorMin < index;
               const belowSelected = cursorMax > index;
 
-              return <SidebarCell 
+              return <SidebarCell
                 key={index} 
                 cell={cell} 
                 index={index} 
