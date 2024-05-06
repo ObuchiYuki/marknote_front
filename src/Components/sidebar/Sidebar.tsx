@@ -2,16 +2,17 @@ import { useAppDispatch, useAppSelector } from "../../hooks/useRedux";
 import styled from "styled-components";
 import { SidebarCell } from "./SidebarCell";
 import { escapeCell, selectCell } from "../../redux/thunk/cellThunks";
-import { DndContext, DragEndEvent, DragStartEvent, MouseSensor, PointerSensor, UniqueIdentifier, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, MouseSensor, PointerSensor, UniqueIdentifier, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
 import { useState } from "react";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { MarkNoteCell } from "../../model/MarkNoteDocument";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { createPortal } from "react-dom";
 
 const SIDEBAR_WIDTH = 150;
 
 export type SidebarProps = {
-  collapsed: boolean,
+  isCollapsed: boolean,
 }
 
 const SidebarCollapserContainer = styled.div<{ $collapsed: boolean }>`
@@ -62,9 +63,12 @@ export const Sidebar = () => {
   };
 
   const filterCells = (cells: MarkNoteCell[]) => {
-    return cells.filter((_, index) => {
-      return true
+    if (activeID == null) return cells;
+    const newCells = cells.filter((cell, index) => {
+      return cell.id === activeID || !(cursorMin <= index && index <= cursorMax);
     });
+    console.log(cursorMin, cursorMax, newCells);
+    return newCells;
   }
 
   const onClick = (index: number, event: React.MouseEvent) => {
@@ -75,6 +79,20 @@ export const Sidebar = () => {
     }
     dispatch(selectCell({ index: index, allowsMultiple: event.shiftKey }));    
   }
+
+  const renderDragOverlay = (id: UniqueIdentifier) => {
+    const cell = doc.cells.find(cell => cell.id === id)!;
+    return (
+      <SidebarCell 
+        cell={cell} 
+        isSelected={false}
+        isHead={false}
+        isAboveSelected={false}
+        isBelowSelected={false}
+        isDragOverlay
+      />
+    );
+  };
 
   return (
     <SidebarCollapserContainer $collapsed={ui.sidebarCollapsed}>
@@ -101,19 +119,26 @@ export const Sidebar = () => {
               const belowSelected = cursorMax > index;
 
               return <SidebarCell
-                key={index} 
+                key={cell.id}
                 cell={cell} 
-                index={index} 
-                head={head} 
-                selected={selected} 
-                aboveSelected={aboveSelected} 
-                belowSelected={belowSelected} 
+                isHead={head} 
+                isSelected={selected} 
+                isAboveSelected={aboveSelected} 
+                isBelowSelected={belowSelected} 
                 onClick={event => onClick(index, event)}
               />
             })}
 
           </SidebarContainer>
         </SortableContext>
+
+        {createPortal(
+          <DragOverlay>
+            <div style={{ transform: `translateY(${dragOffset}px)` }}>
+              {activeID ? renderDragOverlay(activeID): null}
+            </div>
+          </DragOverlay>, document.body
+        )}
       </DndContext>
     </SidebarCollapserContainer>
   );

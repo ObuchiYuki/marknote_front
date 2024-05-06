@@ -10,7 +10,7 @@ export const addCell = (): AppThunk => (dispatch, getState) => {
 
   const inserIndex = ui.selectionHead + 1;
   const nextCells = [...doc.cells];
-  const cell = makeCell({ markdown: "" });
+  const cell = makeCell({ markdown: "", page: inserIndex+1 });
   nextCells.splice(inserIndex, 0, cell);
 
   dispatch(setUIState({
@@ -33,7 +33,7 @@ export const removeCell = (): AppThunk => (dispatch, getState) => {
   if (removeCount === doc.cells.length) {
     // すべてのセルを削除する場合は、最後の1つのセルを残して、内容をクリアする
     const prevID = doc.cells[doc.cells.length - 1].id
-    const cell = makeCell({ markdown: "", id: prevID });
+    const cell = makeCell({ markdown: "", id: prevID, page: 1 });
   
     dispatch(setCells([cell]));
     return;

@@ -68,11 +68,11 @@ export const Notebook = ({ style }: { style: React.CSSProperties }) => {
               key={cell.id} 
               index={index}
               cell={cell} 
-              multipleSelected={multipleSelected} 
-              aboveSelected={aboveSelected}
-              belowSelected={belowSelected}
-              editing={editing} 
-              head={head} 
+              isMultipleSelected={multipleSelected} 
+              isAboveSelected={aboveSelected}
+              isBelowSelected={belowSelected}
+              isEditing={editing} 
+              isHead={head} 
             />;
           })
         }

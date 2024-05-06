@@ -8,27 +8,26 @@ import { editCell, escapeCell, selectCell } from "../../redux/thunk/cellThunks";
 import { useAppDispatch } from "../../hooks/useRedux";
 import { R } from "../R";
 
-const cellBorderRadius = (selected: boolean, aboveSelected: boolean, belowSelected: boolean) => {
-  if (!selected) { return "0"; }
-  if (aboveSelected && belowSelected) { return "0"; }
-  if (aboveSelected) { return "0 0 16px 16px"; }
-  if (belowSelected) { return "16px 16px 0 0"; }
+const cellBorderRadius = (isSelected: boolean, isAboveSelected: boolean, isBelowSelected: boolean) => {
+  if (!isSelected) { return "0"; }
+  if (isAboveSelected && isBelowSelected) { return "0"; }
+  if (isAboveSelected) { return "0 0 16px 16px"; }
+  if (isBelowSelected) { return "16px 16px 0 0"; }
   return "16px";
 }
 
-const CellBackground = styled.div<{ $head: boolean, $multipleSelected: boolean, $aboveSelected: boolean, $belowSelected: boolean }>`
+const CellBackground = styled.div<{ $isHead: boolean, $isMultipleSelected: boolean, $isAboveSelected: boolean, $isBelowSelected: boolean }>`
   display: flex;
   gap: 20px;
   padding: 20px;
   flex-direction: column;
-  background-color: ${props => props.$multipleSelected ? R.color.accentWithAlpha(0.1) : "transparent"};
-  border-radius: ${props => cellBorderRadius(props.$multipleSelected, props.$aboveSelected, props.$belowSelected)};
+  background-color: ${props => props.$isMultipleSelected ? R.color.accentWithAlpha(0.1) : "transparent"};
+  border-radius: ${props => cellBorderRadius(props.$isMultipleSelected, props.$isAboveSelected, props.$isBelowSelected)};
   position: relative;
 
-  /* border-left: 5px solid ${props => props.$head ? R.color.accent : "transparent"}; */
   &::before {
     content: "";
-    display: ${props => props.$head ? "block" : "none"};
+    display: ${props => props.$isHead ? "block" : "none"};
     position: absolute;
     height: calc(100% - 32px);
     width: 5px;
@@ -44,17 +43,17 @@ export type NotebookCellProps = {
 
   index: number,
   
-  head: boolean,
-  multipleSelected: boolean,
-  aboveSelected: boolean,
-  belowSelected: boolean,
-  editing: boolean,
+  isHead: boolean,
+  isMultipleSelected: boolean,
+  isAboveSelected: boolean,
+  isBelowSelected: boolean,
+  isEditing: boolean,
 
   ref?: LegacyRef<HTMLDivElement>
 }
 
 export const NotebookCell = forwardRef<HTMLDivElement, NotebookCellProps>(
-  ({ index, cell, multipleSelected, aboveSelected, belowSelected, editing, head }, ref) => {
+  ({ index, cell, isMultipleSelected, isAboveSelected, isBelowSelected, isEditing: editing, isHead }, ref) => {
   const dispatch = useAppDispatch();
 
   const onClickCell = (event: MouseEvent) => {
@@ -74,10 +73,10 @@ export const NotebookCell = forwardRef<HTMLDivElement, NotebookCellProps>(
   return (
     <CellBackground 
       ref={ref}
-      $head={head} 
-      $multipleSelected={multipleSelected} 
-      $aboveSelected={aboveSelected}
-      $belowSelected={belowSelected}
+      $isHead={isHead} 
+      $isMultipleSelected={isMultipleSelected} 
+      $isAboveSelected={isAboveSelected}
+      $isBelowSelected={isBelowSelected}
       onClick={onClickCell} 
       onMouseDown={preventShiftSelection}
     >
