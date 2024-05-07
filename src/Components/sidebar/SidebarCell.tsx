@@ -61,10 +61,10 @@ export type SidebarCellProps = {
   isDragOverlay?: boolean,
   selectionCount?: number,
 
-  onClick?: (event: React.MouseEvent) => void,
+  onSelect?: (event: React.MouseEvent) => void,
 }
 
-export const SidebarCell = ({ cell, isHead, isSelected, isAboveSelected, isBelowSelected, onClick, isDragOverlay, isHidden }: SidebarCellProps) => {
+export const SidebarCell = ({ cell, isHead, isSelected, isAboveSelected, isBelowSelected, onSelect, isDragOverlay, isHidden }: SidebarCellProps) => {
 
   const {
     attributes,
@@ -79,11 +79,20 @@ export const SidebarCell = ({ cell, isHead, isSelected, isAboveSelected, isBelow
     opacity: isHidden ? 0 : 1,
     cursor: "pointer",
     position: "relative",
-    boxShadow: isDragOverlay ? "0 4px 20px 0 rgba(0,0,0,0.5)" : "0 4px 20px 0 rgba(0,0,0,0)",
     transformOrigin: 'center',
     transition: transition,
     transform: CSS.Transform.toString(transform),
   };
+
+  const listenersMouseDown = (event: React.MouseEvent) => { 
+    if (!(listeners as any)?.onMouseDown) { return; }
+    (listeners as any).onMouseDown(event);
+  }
+
+  const listenersPointerDown = (event: React.PointerEvent) => {
+    if (!(listeners as any)?.onPointerDown) { return; }
+    (listeners as any).onPointerDown(event);
+  }
 
   return (
     <SidebarCellContainer 
@@ -92,22 +101,27 @@ export const SidebarCell = ({ cell, isHead, isSelected, isAboveSelected, isBelow
       $isAboveSelected={isAboveSelected} 
       $isBelowSelected={isBelowSelected} 
       
-      onClick={onClick}
       ref={setNodeRef} 
       style={style} 
-      onMouseDown={e => {
-        e.stopPropagation();
-        e.preventDefault();
+      onMouseDown={event => {
+        listenersMouseDown(event);
+        onSelect?.(event);
+      }}
+      onPointerDown={event => {
+        listenersPointerDown(event);
+        // onSelect?.(event);
       }}
       onDoubleClick={e => {
         e.stopPropagation();
         e.preventDefault();
       }}
       {...attributes}
-      {...listeners}
     >
       <SidebarCellIndex $isHead={isHead}>{ cell.page }</SidebarCellIndex>
-      <SidebarSlideRenderView cell={cell} />
+      <SidebarSlideRenderView 
+        cell={cell} 
+        isDragOverlay={isDragOverlay}
+      />
     </SidebarCellContainer>
   );
 }

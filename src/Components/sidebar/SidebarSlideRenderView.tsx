@@ -4,18 +4,23 @@ import { MarkNoteCell } from "../../model/MarkNoteDocument";
 
 const SIDEBAR_SLIDE_RENDER_WIDTH = 90;
 
-const SidebarSlideRenderViewContainer = styled.div`
+const SidebarSlideRenderViewContainer = styled.div<{ $isDragOverlay: boolean }>`
   width: ${SIDEBAR_SLIDE_RENDER_WIDTH}px;
   height: auto;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  box-shadow: ${props => props.$isDragOverlay ? "0 4px 20px 0 rgba(0,0,0,0.5)" : "0 0 5px rgba(0, 0, 0, 0.2)"};
 `
 
-export const SidebarSlideRenderView = ({ cell }: { cell: MarkNoteCell }) => {
+export type SidebarSlideRenderViewProps = {
+  cell: MarkNoteCell,
+  isDragOverlay?: boolean,
+}
+
+export const SidebarSlideRenderView = ({ cell, isDragOverlay }: SidebarSlideRenderViewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [slideSize, setSlideSize] = useState<{ width: number, height: number }>({ width: 1280, height: 720 });
-  const [scaleFactor, setScaleFactor] = useState(1);
+  const [scaleFactor, setScaleFactor] = useState(0);
   
   useEffect(() => {
     const resizeObserver = new ResizeObserver(entries => {
@@ -46,6 +51,7 @@ export const SidebarSlideRenderView = ({ cell }: { cell: MarkNoteCell }) => {
           height: `${height}px`,
           minHeight: `${height}px`,
         }}
+        $isDragOverlay={isDragOverlay ?? false}
       >
 
         <div 

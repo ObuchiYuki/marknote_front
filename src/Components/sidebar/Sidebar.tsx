@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/useRedux";
 import styled from "styled-components";
 import { SidebarCell } from "./SidebarCell";
 import { escapeCell, selectCell } from "../../redux/thunk/cellThunks";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, MouseSensor, PointerSensor, UniqueIdentifier, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, MouseSensor, PointerSensor, UniqueIdentifier, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
 import { useState } from "react";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { MarkNoteCell } from "../../model/MarkNoteDocument";
@@ -46,7 +46,8 @@ export const Sidebar = () => {
   const [cursorMin, cursorMax] = [ui.selectionAnchor, ui.selectionHead].sort((a, b) => a - b);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+    useSensor(MouseSensor, { activationConstraint: { distance: 50 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 50 } }),
   );
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -63,20 +64,11 @@ export const Sidebar = () => {
   };
 
   const filterCells = (cells: MarkNoteCell[]) => {
-    if (activeID == null) return cells;
-    const newCells = cells.filter((cell, index) => {
-      return cell.id === activeID || !(cursorMin <= index && index <= cursorMax);
-    });
-    console.log(cursorMin, cursorMax, newCells);
-    return newCells;
+    return cells;
   }
 
-  const onClick = (index: number, event: React.MouseEvent) => {
-    event.stopPropagation();
-    event.preventDefault();
-    if (event.shiftKey) {
-      dispatch(escapeCell());
-    }
+  const onSelect = (index: number, event: React.MouseEvent) => {
+    if (event.shiftKey) { dispatch(escapeCell()); }
     dispatch(selectCell({ index: index, allowsMultiple: event.shiftKey }));    
   }
 
@@ -125,7 +117,8 @@ export const Sidebar = () => {
                 isSelected={selected} 
                 isAboveSelected={aboveSelected} 
                 isBelowSelected={belowSelected} 
-                onClick={event => onClick(index, event)}
+                isHidden={activeID === cell.id}
+                onSelect={event => onSelect(index, event)}
               />
             })}
 
@@ -134,9 +127,7 @@ export const Sidebar = () => {
 
         {createPortal(
           <DragOverlay>
-            <div style={{ transform: `translateY(${dragOffset}px)` }}>
               {activeID ? renderDragOverlay(activeID): null}
-            </div>
           </DragOverlay>, document.body
         )}
       </DndContext>
