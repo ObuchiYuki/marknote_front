@@ -2,12 +2,13 @@ import { useAppDispatch, useAppSelector } from "../../hooks/useRedux";
 import styled from "styled-components";
 import { SidebarCell } from "./SidebarCell";
 import { escapeCell, selectCell } from "../../redux/thunk/cellThunks";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, MouseSensor, PointerSensor, UniqueIdentifier, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, MeasuringStrategy, MouseSensor, PointerSensor, UniqueIdentifier, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
 import { useState } from "react";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { MarkNoteCell } from "../../model/MarkNoteDocument";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { createPortal } from "react-dom";
+import { SidebarCellDraggingOverlay } from "./SidebarCellDraggingOverlay";
 
 const SIDEBAR_WIDTH = 150;
 
@@ -21,6 +22,7 @@ const SidebarCollapserContainer = styled.div<{ $collapsed: boolean }>`
   height: 100%;
   overflow: hidden;
   transition: width 0.3s;
+  background-color: #D8DDE4;
   box-shadow: inset -6px 0px 3px -4px rgba(0, 0, 0, 0.1);
 `
 
@@ -63,8 +65,11 @@ export const Sidebar = () => {
     setActiveID(null);
   };
 
-  const filterCells = (cells: MarkNoteCell[]) => {
-    return cells;
+  const filterCells = (cells: MarkNoteCell[]): [MarkNoteCell, number][] => {
+    if (!activeID) { return cells.map((cell, index) => [cell, index]); }
+    return cells
+      .map((cell, index) => [cell, index] as [MarkNoteCell, number])
+      .filter(([cell, index]) => cell.id === activeID || !(cursorMin <= index && index <= cursorMax))
   }
 
   const onSelect = (index: number, event: React.MouseEvent) => {
@@ -74,14 +79,11 @@ export const Sidebar = () => {
 
   const renderDragOverlay = (id: UniqueIdentifier) => {
     const cell = doc.cells.find(cell => cell.id === id)!;
+    const subCell = doc.cells.find((cell, index) => cell.id !== id && cursorMin <= index && index <= cursorMax);
     return (
-      <SidebarCell 
+      <SidebarCellDraggingOverlay
         cell={cell} 
-        isSelected={false}
-        isHead={false}
-        isAboveSelected={false}
-        isBelowSelected={false}
-        isDragOverlay
+        subCell={subCell}
       />
     );
   };
@@ -94,17 +96,22 @@ export const Sidebar = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
+        measuring={{
+          droppable: {
+            strategy: MeasuringStrategy.Always
+          }
+        }}
         modifiers={[
           restrictToVerticalAxis
         ]}
       >
 
         <SortableContext
-          items={filterCells(doc.cells)}
+          items={filterCells(doc.cells).map(([cell, _]) => cell)}
           strategy={verticalListSortingStrategy}
         >
           <SidebarContainer>
-            {filterCells(doc.cells).map((cell, index) => {
+            {filterCells(doc.cells).map(([cell, index]) => {
               const head = ui.selectionHead === index;
               const selected = cursorMin <= index && index <= cursorMax;
               const aboveSelected = cursorMin < index;

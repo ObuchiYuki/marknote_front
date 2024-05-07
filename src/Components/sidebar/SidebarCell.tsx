@@ -5,24 +5,26 @@ import { R } from "../R";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+const CELL_CORNER_RADIUS = 10;
+
 const cellBorderRadius = (isSelected: boolean, isAboveSelected: boolean, isBelowSelected: boolean) => {
   if (!isSelected) { return "0"; }
   if (isAboveSelected && isBelowSelected) { return "0"; }
-  if (isAboveSelected) { return "0 0 8px 8px"; }
-  if (isBelowSelected) { return "8px 8px 0 0"; }
-  return "8px";
+  if (isAboveSelected) { return `0 0 ${CELL_CORNER_RADIUS}px ${CELL_CORNER_RADIUS}px`; }
+  if (isBelowSelected) { return `${CELL_CORNER_RADIUS}px ${CELL_CORNER_RADIUS}px 0 0`; }
+  return `${CELL_CORNER_RADIUS}px`;
 }
 
-export const SidebarCellContainer = styled.div<{ $isHead: boolean, $isSelected: boolean, $isAboveSelected: boolean, $isBelowSelected: boolean }>`
-  padding: 6px;
+const SidebarCellContainer = styled.div<{ $isHead: boolean, $isSelected: boolean, $isAboveSelected: boolean, $isBelowSelected: boolean }>`
+  padding: 5px;
   display: flex;
   flex-direction: row;
-  align-items: baseline;
-  gap: 8px;
+  align-items: end;
+  justify-content: flex-end;
+  gap: 4px;
   position: relative;
   background-color: ${props => props.$isSelected ? R.color.accentWithAlpha(0.2) : "transparent"};
   border-radius: ${props => cellBorderRadius(props.$isSelected, props.$isAboveSelected, props.$isBelowSelected)};
-  position: relative;
   
   &::before {
     content: "";
@@ -34,23 +36,25 @@ export const SidebarCellContainer = styled.div<{ $isHead: boolean, $isSelected: 
     width: 100%;
     height: 100%;
     border-radius: 8px;
+    z-index: -1;
     background-color: ${R.color.accent}
   }
 `
 
-export const SidebarCellIndex = styled.span<{ $isHead: boolean }>`
+export const SidebarCellIndex = styled.span<{ $isHead: boolean, $isDragOverlay: boolean }>`
   color: ${props => props.$isHead ? "white" : R.color.secondaryText};
-  font-size: 10px;
-  font-weight: 600;
+  opacity: ${props => props.$isDragOverlay ? 0 : 1};
+  font-size: 11px;
+  font-weight: 400;
   width: 11px;  
   min-width: 11px;
   max-width: 11px;
   text-align: right;
-  transform: translateY(-2px);
 `
 
 export type SidebarCellProps = {
   cell: MarkNoteCell,
+  gragSubCell?: MarkNoteCell,
 
   isHead: boolean,
   isSelected: boolean,
@@ -105,19 +109,29 @@ export const SidebarCell = ({ cell, isHead, isSelected, isAboveSelected, isBelow
       style={style} 
       onMouseDown={event => {
         listenersMouseDown(event);
-        onSelect?.(event);
+        event.stopPropagation();
+        event.preventDefault();
       }}
       onPointerDown={event => {
         listenersPointerDown(event);
-        // onSelect?.(event);
+        event.stopPropagation();
+        event.preventDefault();
       }}
-      onDoubleClick={e => {
-        e.stopPropagation();
-        e.preventDefault();
+      onDoubleClick={event => {
+        event.stopPropagation();
+        event.preventDefault();
+      }}
+      onClick={event => {
+        onSelect?.(event);
       }}
       {...attributes}
     >
-      <SidebarCellIndex $isHead={isHead}>{ cell.page }</SidebarCellIndex>
+      <SidebarCellIndex 
+        $isHead={isHead}
+        $isDragOverlay={isDragOverlay ?? false}
+      >
+      { cell.page }
+      </SidebarCellIndex>
       <SidebarSlideRenderView 
         cell={cell} 
         isDragOverlay={isDragOverlay}

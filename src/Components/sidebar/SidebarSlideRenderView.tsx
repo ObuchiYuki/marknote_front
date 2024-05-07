@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { MarkNoteCell } from "../../model/MarkNoteDocument";
 
-const SIDEBAR_SLIDE_RENDER_WIDTH = 90;
+const SIDEBAR_SLIDE_RENDER_WIDTH = 100;
 
 const SidebarSlideRenderViewContainer = styled.div<{ $isDragOverlay: boolean }>`
   width: ${SIDEBAR_SLIDE_RENDER_WIDTH}px;
   height: auto;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
-  box-shadow: ${props => props.$isDragOverlay ? "0 4px 20px 0 rgba(0,0,0,0.5)" : "0 0 5px rgba(0, 0, 0, 0.2)"};
+  box-shadow: ${props => props.$isDragOverlay ? "none" : "0 1px 4px rgba(0, 0, 0, 0.3)"};
 `
 
 export type SidebarSlideRenderViewProps = {
@@ -17,7 +17,7 @@ export type SidebarSlideRenderViewProps = {
   isDragOverlay?: boolean,
 }
 
-export const SidebarSlideRenderView = ({ cell, isDragOverlay }: SidebarSlideRenderViewProps) => {
+export const SidebarSlideRenderView = ({ cell, isDragOverlay, style }: SidebarSlideRenderViewProps & { style?: React.CSSProperties }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [slideSize, setSlideSize] = useState<{ width: number, height: number }>({ width: 1280, height: 720 });
   const [scaleFactor, setScaleFactor] = useState(0);
@@ -50,6 +50,7 @@ export const SidebarSlideRenderView = ({ cell, isDragOverlay }: SidebarSlideRend
           minWidth: `${width}px`,
           height: `${height}px`,
           minHeight: `${height}px`,
+          ...style
         }}
         $isDragOverlay={isDragOverlay ?? false}
       >
