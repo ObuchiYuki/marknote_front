@@ -4,7 +4,7 @@ import { LegacyRef, MouseEvent, forwardRef } from "react";
 import { MarkNoteCell } from "../../model/MarkNoteDocument";
 import { MarkdownArea } from "./MarkdownArea";
 import { SlideArea } from "./SlideArea";
-import { editCell, escapeCell, selectCell } from "../../redux/thunk/cellThunks";
+import { escapeCell, selectCell } from "../../redux/thunk/cellThunks";
 import { useAppDispatch } from "../../hooks/useRedux";
 import { R } from "../R";
 

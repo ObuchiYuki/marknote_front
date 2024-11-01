@@ -66,7 +66,6 @@ export const useMarkdownEditor = ({ doc, setDoc, eventHandler, imageProcessor }:
     }
   }, [doc, view]);
 
-
   const imageActions = useImageAction(imageProcessor);
   const syntaxHighlight = useSyntaxHighlight();
   const markdownExtension = useMarkdown();

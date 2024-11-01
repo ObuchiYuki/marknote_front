@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import styled, { css, keyframes } from "styled-components";
+import styled from "styled-components";
 import { MarkNoteCell } from "../../model/MarkNoteDocument";
 
 const SIDEBAR_SLIDE_RENDER_WIDTH = 100;

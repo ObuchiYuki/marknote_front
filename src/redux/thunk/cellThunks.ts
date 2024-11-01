@@ -122,6 +122,7 @@ const _moveCell = ({ target }: { target: number }): AppThunk => (dispatch, getSt
   }));
 
   dispatch(setCells(nextCells));
+  dispatch(_reattachPageIndex());
 }
 
 export const moveUp = (): AppThunk => (dispatch, getState) => {
@@ -153,4 +154,39 @@ export const selectDownAndNewCellIfBottom = (): AppThunk => (dispatch, getState)
   if (ui.selectionHead === doc.cells.length - 1) {
     dispatch(addCell());
   }
+}
+
+export const moveSelectedCells = ({ index }: { index: number }): AppThunk => (dispatch, getState) => {
+  const { present: { doc, ui } } = getState();
+
+  const [min, max] = minmax(ui.selectionHead, ui.selectionAnchor);
+  const headCellID = doc.cells[min].id;
+  const anchorCellID = doc.cells[max].id;
+  const editingCellID = ui.editingCell != null ? doc.cells[ui.editingCell].id : undefined;
+
+  const nextCells = arrayMove(doc.cells, { from: min, to: max+1 }, index);
+  const nextHead = nextCells.findIndex(cell => cell.id === headCellID) ?? 0;
+  const nextAnchor = nextCells.findIndex(cell => cell.id === anchorCellID) ?? 0;
+  const nextEditingCellIndex = editingCellID != null ? nextCells.findIndex(cell => cell.id === editingCellID) : undefined;
+
+  dispatch(setUIState({
+    head: nextHead,
+    anchor: nextAnchor,
+    editing: nextEditingCellIndex
+  }));
+
+  dispatch(setCells(nextCells));
+  dispatch(_reattachPageIndex());
+}
+
+export const _reattachPageIndex = (): AppThunk => (dispatch, getState) => {
+  const { present: { doc } } = getState();
+
+  const newCells = [];
+  for (let i = 0; i < doc.cells.length; i++) {
+    const cell = doc.cells[i];
+    newCells.push({ ...cell, page: i+1 });
+  }
+
+  dispatch(setCells(newCells));
 }

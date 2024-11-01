@@ -1,8 +1,8 @@
 import { useAppDispatch, useAppSelector } from "../../hooks/useRedux";
 import styled from "styled-components";
 import { SidebarCell } from "./SidebarCell";
-import { escapeCell, selectCell } from "../../redux/thunk/cellThunks";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, MeasuringStrategy, MouseSensor, PointerSensor, UniqueIdentifier, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
+import { escapeCell, moveSelectedCells, selectCell } from "../../redux/thunk/cellThunks";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, MouseSensor, PointerSensor, UniqueIdentifier, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
 import { useState } from "react";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { MarkNoteCell } from "../../model/MarkNoteDocument";
@@ -31,7 +31,7 @@ const SidebarContainer = styled.div`
   flex-direction: column;
   height: 100%;
   padding: 12px;
-  overflow-y: scroll; /* Enable vertical scrollbar for overflow content */
+  overflow-y: scroll; 
   width: ${SIDEBAR_WIDTH}px;
   min-width: ${SIDEBAR_WIDTH}px;
 
@@ -44,12 +44,11 @@ export const Sidebar = () => {
   const dispatch = useAppDispatch();
   const { doc, ui } = useAppSelector(state => state.present);
   const [activeID, setActiveID] = useState<UniqueIdentifier | null>(null);
-  const [dragOffset, setDragOffset] = useState(0);
   const [cursorMin, cursorMax] = [ui.selectionAnchor, ui.selectionHead].sort((a, b) => a - b);
 
   const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 50 } }),
-    useSensor(PointerSensor, { activationConstraint: { distance: 50 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 20 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 20 } }),
   );
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -58,6 +57,12 @@ export const Sidebar = () => {
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
+    const over = event.over?.id;
+    const overIndex = doc.cells.findIndex(cell => cell.id === over);
+    if (overIndex == null) { return; }
+
+    dispatch(moveSelectedCells({ index: overIndex }));
+    
     setActiveID(null);
   };
 
@@ -72,19 +77,31 @@ export const Sidebar = () => {
       .filter(([cell, index]) => cell.id === activeID || !(cursorMin <= index && index <= cursorMax))
   }
 
-  const onSelect = (index: number, event: React.MouseEvent) => {
+  const onPointerDown = (cell: MarkNoteCell, event: React.MouseEvent) => {
+    const index = doc.cells.findIndex(c => c.id === cell.id);
+    if (index == null || (cursorMin <= index && index <= cursorMax)) { return; }
     if (event.shiftKey) { dispatch(escapeCell()); }
     dispatch(selectCell({ index: index, allowsMultiple: event.shiftKey }));    
   }
 
+  const onClick = (cell: MarkNoteCell, event: React.MouseEvent) => {
+    const index = doc.cells.findIndex(c => c.id === cell.id);
+    if (index == null) { return; }
+    if (event.shiftKey) { dispatch(escapeCell()); }
+    dispatch(selectCell({ index: index, allowsMultiple: event.shiftKey })); 
+  }
+
   const renderDragOverlay = (id: UniqueIdentifier) => {
-    const cell = doc.cells.find(cell => cell.id === id)!;
-    const subCell = doc.cells.find((cell, index) => cell.id !== id && cursorMin <= index && index <= cursorMax);
+    const cell = doc.cells.find(cell => cell.id === id);
+    if (!cell) { return null; }
+    const subCell1 = doc.cells.find((cell, index) => 
+      cell.id !== id && cursorMin <= index && index <= cursorMax
+    );
+    const subCell2 = doc.cells.find((cell, index) => 
+      cell.id !== id && cell.id !== subCell1?.id && cursorMin <= index && index <= cursorMax
+    );
     return (
-      <SidebarCellDraggingOverlay
-        cell={cell} 
-        subCell={subCell}
-      />
+      <SidebarCellDraggingOverlay cell={cell} subCell1={subCell1} subCell2={subCell2}/>
     );
   };
 
@@ -96,14 +113,7 @@ export const Sidebar = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
-        measuring={{
-          droppable: {
-            strategy: MeasuringStrategy.Always
-          }
-        }}
-        modifiers={[
-          restrictToVerticalAxis
-        ]}
+        modifiers={[restrictToVerticalAxis]}
       >
 
         <SortableContext
@@ -119,16 +129,16 @@ export const Sidebar = () => {
 
               return <SidebarCell
                 key={cell.id}
-                cell={cell} 
+                cell={cell}
                 isHead={head} 
                 isSelected={selected} 
                 isAboveSelected={aboveSelected} 
                 isBelowSelected={belowSelected} 
                 isHidden={activeID === cell.id}
-                onSelect={event => onSelect(index, event)}
+                onPointerDown={event => onPointerDown(cell, event)}
+                onClick={event => onClick(cell, event)}
               />
             })}
-
           </SidebarContainer>
         </SortableContext>
 

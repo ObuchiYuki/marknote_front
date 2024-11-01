@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { NotebookCell } from "./NotebookCell";
 import { useAppSelector } from "../../hooks/useRedux";
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 
 const NodebookContainer = styled.div`
   display: flex;

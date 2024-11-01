@@ -5,14 +5,14 @@ import { R } from "../R";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-const CELL_CORNER_RADIUS = 10;
+const CELL_SELECTION_CORNER_RADIUS = 9;
 
 const cellBorderRadius = (isSelected: boolean, isAboveSelected: boolean, isBelowSelected: boolean) => {
   if (!isSelected) { return "0"; }
   if (isAboveSelected && isBelowSelected) { return "0"; }
-  if (isAboveSelected) { return `0 0 ${CELL_CORNER_RADIUS}px ${CELL_CORNER_RADIUS}px`; }
-  if (isBelowSelected) { return `${CELL_CORNER_RADIUS}px ${CELL_CORNER_RADIUS}px 0 0`; }
-  return `${CELL_CORNER_RADIUS}px`;
+  if (isAboveSelected) { return `0 0 ${CELL_SELECTION_CORNER_RADIUS}px ${CELL_SELECTION_CORNER_RADIUS}px`; }
+  if (isBelowSelected) { return `${CELL_SELECTION_CORNER_RADIUS}px ${CELL_SELECTION_CORNER_RADIUS}px 0 0`; }
+  return `${CELL_SELECTION_CORNER_RADIUS}px`;
 }
 
 const SidebarCellContainer = styled.div<{ $isHead: boolean, $isSelected: boolean, $isAboveSelected: boolean, $isBelowSelected: boolean }>`
@@ -35,7 +35,7 @@ const SidebarCellContainer = styled.div<{ $isHead: boolean, $isSelected: boolean
     left: 0;
     width: 100%;
     height: 100%;
-    border-radius: 8px;
+    border-radius: ${CELL_SELECTION_CORNER_RADIUS}px;
     z-index: -1;
     background-color: ${R.color.accent}
   }
@@ -65,10 +65,11 @@ export type SidebarCellProps = {
   isDragOverlay?: boolean,
   selectionCount?: number,
 
-  onSelect?: (event: React.MouseEvent) => void,
+  onPointerDown?: (event: React.MouseEvent) => void,
+  onClick?: (event: React.MouseEvent) => void,
 }
 
-export const SidebarCell = ({ cell, isHead, isSelected, isAboveSelected, isBelowSelected, onSelect, isDragOverlay, isHidden }: SidebarCellProps) => {
+export const SidebarCell = ({ cell, isHead, isSelected, isAboveSelected, isBelowSelected, onPointerDown, onClick, isDragOverlay, isHidden }: SidebarCellProps) => {
 
   const {
     attributes,
@@ -88,11 +89,6 @@ export const SidebarCell = ({ cell, isHead, isSelected, isAboveSelected, isBelow
     transform: CSS.Transform.toString(transform),
   };
 
-  const listenersMouseDown = (event: React.MouseEvent) => { 
-    if (!(listeners as any)?.onMouseDown) { return; }
-    (listeners as any).onMouseDown(event);
-  }
-
   const listenersPointerDown = (event: React.PointerEvent) => {
     if (!(listeners as any)?.onPointerDown) { return; }
     (listeners as any).onPointerDown(event);
@@ -107,12 +103,13 @@ export const SidebarCell = ({ cell, isHead, isSelected, isAboveSelected, isBelow
       
       ref={setNodeRef} 
       style={style} 
-      onMouseDown={event => {
-        listenersMouseDown(event);
+      onClick={event => {
+        onClick?.(event);
         event.stopPropagation();
         event.preventDefault();
       }}
       onPointerDown={event => {
+        onPointerDown?.(event);
         listenersPointerDown(event);
         event.stopPropagation();
         event.preventDefault();
@@ -120,9 +117,6 @@ export const SidebarCell = ({ cell, isHead, isSelected, isAboveSelected, isBelow
       onDoubleClick={event => {
         event.stopPropagation();
         event.preventDefault();
-      }}
-      onClick={event => {
-        onSelect?.(event);
       }}
       {...attributes}
     >
